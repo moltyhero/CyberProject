@@ -6,12 +6,11 @@
         xmlns:local="clr-namespace:TheMaze"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="500" ResizeMode="NoResize">
-    <Grid>
+    <Grid Name="mainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Name="menu" Width="1*"/>
             <ColumnDefinition Name="mazePlace" Width="4*"/>
             <ColumnDefinition Width="1*"/>
-
 
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -20,5 +19,11 @@
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         
+        <StackPanel Name="mainStackPanel" Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
+            
+        </StackPanel>
+        
+        
+
     </Grid>
 </Window>

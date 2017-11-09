@@ -18,9 +18,8 @@
             <RowDefinition Height="4*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        
-        <StackPanel Name="mainStackPanel" Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
-            
+
+        <StackPanel Name="mainStackPanel" VerticalAlignment="Center" Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
         </StackPanel>
         
         

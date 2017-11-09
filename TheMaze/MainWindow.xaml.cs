@@ -26,11 +26,23 @@ namespace TheMaze
             CreateMaze();
         }
 
-        public void CreateMaze()
+        // Calculate the size of the rectangle for the StackPanel
+        private double calcRectSize(double StackHeight, double StackWidth, int rows, int cols)
         {
-            
-            int rows = 2;
-            int cols = 3;
+            double HeightSize;
+            double WidthSize;
+            HeightSize = StackHeight / rows;
+            WidthSize = StackWidth / cols;
+            return Math.Min(HeightSize, WidthSize);
+        }
+
+        private void CreateMaze()
+        {
+            int rows = 20;
+            int cols = 22;
+            //mainStackPanel.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+            double size = calcRectSize(mainStackPanel.ActualHeight, mainStackPanel.ActualWidth, rows, cols);
+
             // Get the maze size
             /*System.Console.WriteLine("Enter row");
             rows = Int32.Parse(Console.ReadLine());
@@ -48,8 +60,8 @@ namespace TheMaze
                 for (int j = 0; j < rows; j++)
                 {
                     Rectangle rect = new Rectangle();
-                    rect.Height = 100;
-                    rect.Width = 100;
+                    rect.Height = size;
+                    rect.Width = size;
                     rect.Fill = new SolidColorBrush(System.Windows.Media.Colors.Blue);
                     stackPannel.Children.Add(rect);
                 }

@@ -26,7 +26,7 @@ namespace TheMaze
             CreateMaze();
         }
 
-        // Calculate the size of the rectangle for the StackPanel
+        // Calculate the desired size of the rectangle
         private double calcRectSize(double StackHeight, double StackWidth, int rows, int cols)
         {
             double HeightSize;

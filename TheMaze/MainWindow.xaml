@@ -1,11 +1,11 @@
-﻿<Window x:Class="TheMaze.MainWindow"
+﻿<Window x:Name="mazeWindow" x:Class="TheMaze.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheMaze"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="500" ResizeMode="NoResize">
+        Title="MainWindow" Height="500" Width="500">
     <Grid Name="mainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Name="menu" Width="1*"/>
@@ -18,8 +18,8 @@
             <RowDefinition Height="4*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-
-        <StackPanel Name="mainStackPanel" VerticalAlignment="Center" Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
+        <!--<Rectangle Name="helper" Grid.Column="1" Grid.Row="1" Height="Auto" Width="Auto"></Rectangle>-->
+        <StackPanel Name="mainStackPanel" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
         </StackPanel>
         
         

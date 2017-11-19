@@ -40,35 +40,28 @@ namespace TheMaze
         {
             int rows = 20;
             int cols = 22;
-            // helper.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
             double w = mazeWindow.Width*4/6;
             double h = mazeWindow.Height*4/6;
-            // double size = calcRectSize(mainStackPanel.ActualHeight, mainStackPanel.ActualWidth, rows, cols);
             double size = calcRectSize(h, w, rows, cols);
 
-            // Get the maze size
-            /*System.Console.WriteLine("Enter row");
-            rows = Int32.Parse(Console.ReadLine());
-            System.Console.WriteLine("Enter col");
-            cols = Int32.Parse(Console.ReadLine());*/
-
-
-
-            // Add stack pannels to the stack pannels
+            // Add stack pannels to the main stack pannel
             for (int i = 0; i<cols; i++)
             {
-                StackPanel stackPannel = new StackPanel();
-                stackPannel.Name = ("col" +i);
-                
+                StackPanel stackPannel = new StackPanel()
+                {
+                    Name = ("col" + i)
+                };
 
                 for (int j = 0; j < rows; j++)
                 {
-                    Rectangle rect = new Rectangle();
-                    rect.Height = size;
-                    rect.Width = size;
-                    rect.Fill = new SolidColorBrush(System.Windows.Media.Colors.Gray);
-                    rect.StrokeThickness = 1;
-                    rect.Stroke = Brushes.Violet;
+                    Rectangle rect = new Rectangle()
+                    {
+                        Height = size,
+                        Width = size,
+                        Fill = new SolidColorBrush(System.Windows.Media.Colors.Gray),
+                        StrokeThickness = 1,
+                        Stroke = Brushes.Violet
+                    };
                     stackPannel.Children.Add(rect);
                 }
 

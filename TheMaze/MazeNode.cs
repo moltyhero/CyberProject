@@ -12,6 +12,8 @@ namespace TheMaze
 {
     class MazeNode
     {
+        int height;
+        int width;
         public const int North = 0;
         public const int South = North + 1;
         public const int East = South + 1;
@@ -26,6 +28,14 @@ namespace TheMaze
         // The node's bounds.
         public Rectangle Bounds;
 
-        
+        // The node's borders
+        public Border Borders;
+
+        public void createBounds()
+        {
+
+        }
+
+
     }
 }

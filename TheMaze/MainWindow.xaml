@@ -20,10 +20,7 @@
         </Grid.RowDefinitions>
         <!--<Rectangle Name="helper" Grid.Column="1" Grid.Row="1" Height="Auto" Width="Auto"></Rectangle>-->
         <StackPanel Name="mainStackPanel" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
-            <Border BorderThickness="5" BorderBrush="Green"  HorizontalAlignment="Right" VerticalAlignment="Top" >
-
-                <Rectangle Grid.Column="1" Fill="Black" HorizontalAlignment="Left" Height="100"  Grid.Row="1" Stroke="Black" VerticalAlignment="Top"  Width="100"/>
-            </Border>
+            
         </StackPanel>
     </Grid>
 </Window>

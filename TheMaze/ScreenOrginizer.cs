@@ -51,6 +51,7 @@ namespace TheMaze
 
                 for (int j = 0; j < rows; j++)
                 {
+                    // Should use the MazeNode.GenerateBounds() method instead of this
                     Rectangle rect = new Rectangle()
                     {
                         Height = size,

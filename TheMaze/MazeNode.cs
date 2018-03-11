@@ -12,8 +12,7 @@ namespace TheMaze
 {
     class MazeNode
     {
-        int height;
-        int width;
+        int size;
         public const int North = 0;
         public const int South = North + 1;
         public const int East = South + 1;
@@ -31,11 +30,26 @@ namespace TheMaze
         // The node's borders
         public Border Borders;
 
-        public void createBounds()
+        public void GenerateBounds()
         {
-
+            Bounds = new Rectangle()
+            {
+                Height = size,
+                Width = size,
+                Fill = new SolidColorBrush(System.Windows.Media.Colors.Gray),
+                StrokeThickness = 1,
+                Stroke = Brushes.Violet
+            };
         }
 
+        public void GenerateBorders()
+        {
+            Borders = new Border()
+            {
+                BorderBrush = Brushes.Black,
+                BorderThickness = new Thickness(0, 0, 0, 0) // Order - Left, Top, Right, and Bottom
+            };
+        }
 
     }
 }

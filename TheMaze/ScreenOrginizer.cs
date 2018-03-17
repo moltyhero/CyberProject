@@ -56,6 +56,7 @@ namespace TheMaze
                         nodes[c, r].Neighbors[MazeNode.East] = nodes[c + 1, r];
                 }
             }
+            MainWindow.playerCurrentLocation = nodes[0, 0];
         }
 
         // Calculate the desired size of the rectangle

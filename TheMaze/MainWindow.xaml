@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheMaze"
         mc:Ignorable="d"
+        KeyDown="OnKeyDownHandler"
         Title="MainWindow" Height="800" Width="800">
     <Grid Name="mainGrid">
         <Grid.ColumnDefinitions>

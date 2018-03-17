@@ -9,7 +9,7 @@ namespace TheMaze
     public class Algorithm
     {
         // Build a spanning tree with the indicated root node.
-        private void FindSpanningTree(MazeNode root)
+        public static void FindSpanningTree(MazeNode root)
         {
             Random rand = new Random();
 
@@ -36,6 +36,7 @@ namespace TheMaze
 
                 // Add this link to the tree.
                 MazeNode to_node = link.ToNode;
+                ScreenOrginizer.last = to_node;
                 link.ToNode.Predecessor = link.FromNode;
 
                 // Remove any links from the list that point

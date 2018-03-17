@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheMaze"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="500">
+        Title="MainWindow" Height="1000" Width="1000">
     <Grid Name="mainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Name="menu" Width="1*"/>
@@ -22,8 +22,8 @@
         <StackPanel Name="mainStackPanel" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
 
         </StackPanel>
-        <TextBox Name="mazeRows" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="120,30,0,0" PreviewTextInput="MazeSizeTextBox" Text="20" VerticalAlignment="Top" Width="35" MaxLength="3"/>
-        <TextBox Name="mazeCols" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="160,30,0,0" PreviewTextInput="MazeSizeTextBox" Text="20" VerticalAlignment="Top" Width="35" MaxLength="3"/>
+        <TextBox Name="mazeRows" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="120,30,0,0" PreviewTextInput="MazeSizeTextBox" Text="50" VerticalAlignment="Top" Width="35" MaxLength="3"/>
+        <TextBox Name="mazeCols" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="160,30,0,0" PreviewTextInput="MazeSizeTextBox" Text="50" VerticalAlignment="Top" Width="35" MaxLength="3"/>
         <TextBlock Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="35,30,0,0" Text="Maze Size" VerticalAlignment="Top" />
     </Grid>
 </Window>

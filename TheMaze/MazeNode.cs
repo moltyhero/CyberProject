@@ -36,18 +36,35 @@ namespace TheMaze
             {
                 Height = boundsSize,
                 Width = boundsSize,
-                Fill = new SolidColorBrush(System.Windows.Media.Colors.Gray),
-                StrokeThickness = 1,
-                Stroke = Brushes.Violet
+                Fill = new SolidColorBrush(System.Windows.Media.Colors.White),
+                /*StrokeThickness = 1,
+                Stroke = Brushes.Violet*/
             };
+            if (this.Predecessor == this)
+                this.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Black);
+            else if (this == ScreenOrginizer.last)
+                this.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Yellow);
         }
 
         public void GenerateBorders()
         {
+            int[] sides = new int[4];
+            for (int i=0; i<4; i++)
+            {
+                if (Neighbors[i] != null) // If you either don't have a neighbor there
+                {
+                    if (Neighbors[i] != Predecessor && Neighbors[i].Predecessor != this) //  If this node is not connected to you by the spanning tree
+                    {
+                        sides[i] = 1;
+                    }
+                }
+                else sides[i] = 1;
+                    
+            }
             this.Borders = new Border()
             {
                 BorderBrush = Brushes.Black,
-                BorderThickness = new Thickness(0, 0, 0, 0) // Order - Left, Top, Right, and Bottom
+                BorderThickness = new Thickness(sides[3], sides[0], sides[2], sides[1]) // Order - Left, Top, Right, and Bottom
             };
         }
 

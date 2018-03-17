@@ -13,19 +13,21 @@ namespace TheMaze
     {
         double screenHeight;
         double screenWidth;
-        int mazeSize;
+        int rows;
+        int cols;
         MazeNode[,] nodes;
 
-        public ScreenOrginizer(double screenHeight, double screenWidth, int size)
+        public ScreenOrginizer(double screenHeight, double screenWidth, int rows, int cols)
         {
             this.screenHeight = screenHeight;
             this.screenWidth = screenWidth;
-            this.mazeSize = size;
-            nodes = new MazeNode[size, size];
+            this.rows = rows;
+            this.cols = cols;
+            nodes = new MazeNode[rows, cols];
         }
 
         // Calculate the desired size of the rectangle
-        private double calcRectSize(double StackHeight, double StackWidth, int rows, int cols)
+        private double CalcRectSize(double StackHeight, double StackWidth, int rows, int cols)
         {
             double HeightSize;
             double WidthSize;
@@ -39,21 +41,21 @@ namespace TheMaze
         /// </summary>
         /// <param name="rows"></param>
         /// <param name="cols"></param>
-        public void CreateMaze(int rows, int cols, StackPanel main)
+        public void CreateMaze(StackPanel main)
         {
             double w = screenWidth * 4 / 6;
             double h = screenHeight * 4 / 6;
-            double size = calcRectSize(h, w, rows, cols);
+            double size = CalcRectSize(h, w, rows, cols);
 
             // Add stack pannels to the main stack pannel
-            for (int i = 0; i < cols; i++)
+            for (int i = 0; i < this.cols; i++)
             {
                 StackPanel stackPannel = new StackPanel()
                 {
                     Name = ("col" + i)
                 };
 
-                for (int j = 0; j < rows; j++)
+                for (int j = 0; j < this.rows; j++)
                 {
                     // Should use the MazeNode.GenerateBounds() method instead of this
                     Rectangle rect = new Rectangle()

@@ -22,7 +22,8 @@
         <StackPanel Name="mainStackPanel" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
 
         </StackPanel>
-        <TextBox Name="mazeSize" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="120,30,0,0" PreviewTextInput="1000" VerticalAlignment="Top" Width="35"/>
+        <TextBox Name="mazeRows" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="120,30,0,0" PreviewTextInput="MazeSizeTextBox" Text="20" VerticalAlignment="Top" Width="35" MaxLength="3"/>
+        <TextBox Name="mazeCols" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="160,30,0,0" PreviewTextInput="MazeSizeTextBox" Text="20" VerticalAlignment="Top" Width="35" MaxLength="3"/>
         <TextBlock Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="35,30,0,0" Text="Maze Size" VerticalAlignment="Top" />
     </Grid>
 </Window>

@@ -15,7 +15,8 @@ namespace TheMaze
         double screenWidth;
         int rows;
         int cols;
-        MazeNode[,] nodes;
+        public static double rectSize;
+        MazeNode[,] nodes; // Array of the maze's nodes
 
         public ScreenOrginizer(double screenHeight, double screenWidth, int rows, int cols)
         {
@@ -23,17 +24,49 @@ namespace TheMaze
             this.screenWidth = screenWidth;
             this.rows = rows;
             this.cols = cols;
-            nodes = new MazeNode[rows, cols];
+            nodes = new MazeNode[cols, rows];
+        }
+
+        // Make the network of MazeNodes.
+        private MazeNode[,] MakeNodes()
+        {
+            // Make the nodes.
+            nodes = new MazeNode[cols, rows];
+            for (int i = 0; i < cols; i++)
+            {
+                for (int j = 0; j < rows; j++)
+                {
+                    nodes[i, j] = new MazeNode();
+                }
+            }
+
+            // Initialize the nodes' neighbors.
+            for (int r = 0; r < cols; r++)
+            {
+                for (int c = 0; c < rows; c++)
+                {
+                    if (r > 0)
+                        nodes[r, c].Neighbors[MazeNode.North] = nodes[r - 1, c];
+                    if (r < cols - 1)
+                        nodes[r, c].Neighbors[MazeNode.South] = nodes[r + 1, c];
+                    if (c > 0)
+                        nodes[r, c].Neighbors[MazeNode.West] = nodes[r, c - 1];
+                    if (c < rows - 1)
+                        nodes[r, c].Neighbors[MazeNode.East] = nodes[r, c + 1];
+                }
+            }
+            // Return the nodes.
+            return nodes;
         }
 
         // Calculate the desired size of the rectangle
-        private double CalcRectSize(double StackHeight, double StackWidth, int rows, int cols)
+        private void CalcRectSize(double StackHeight, double StackWidth, int rows, int cols)
         {
             double HeightSize;
             double WidthSize;
             HeightSize = StackHeight / rows;
             WidthSize = StackWidth / cols;
-            return Math.Min(HeightSize, WidthSize);
+            rectSize = Math.Min(HeightSize, WidthSize);
         }
 
         /// <summary>
@@ -45,7 +78,8 @@ namespace TheMaze
         {
             double w = screenWidth * 4 / 6;
             double h = screenHeight * 4 / 6;
-            double size = CalcRectSize(h, w, rows, cols);
+            CalcRectSize(h, w, rows, cols);
+            MakeNodes();
 
             // Add stack pannels to the main stack pannel
             for (int i = 0; i < this.cols; i++)
@@ -58,17 +92,17 @@ namespace TheMaze
                 for (int j = 0; j < this.rows; j++)
                 {
                     // Should use the MazeNode.GenerateBounds() method instead of this
-                    Rectangle rect = new Rectangle()
+                    /*Rectangle rect = new Rectangle()
                     {
-                        Height = size,
-                        Width = size,
+                        Height = rectSize,
+                        Width = rectSize,
                         Fill = new SolidColorBrush(System.Windows.Media.Colors.Gray),
                         StrokeThickness = 1,
                         Stroke = Brushes.Violet
-                    };
-                    stackPannel.Children.Add(rect);
+                    };*/
+                    nodes[i, j].GenerateBounds();
+                    stackPannel.Children.Add(nodes[i, j].Bounds);
                 }
-
                 main.Children.Add(stackPannel);
             }
 

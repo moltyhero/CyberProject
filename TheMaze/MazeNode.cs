@@ -12,7 +12,7 @@ namespace TheMaze
 {
     public class MazeNode
     {
-        int size;
+        double boundsSize = ScreenOrginizer.rectSize;
         public const int North = 0;
         public const int South = North + 1;
         public const int East = South + 1;
@@ -34,8 +34,8 @@ namespace TheMaze
         {
             this.Bounds = new Rectangle()
             {
-                Height = size,
-                Width = size,
+                Height = boundsSize,
+                Width = boundsSize,
                 Fill = new SolidColorBrush(System.Windows.Media.Colors.Gray),
                 StrokeThickness = 1,
                 Stroke = Brushes.Violet

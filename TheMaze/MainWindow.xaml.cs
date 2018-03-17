@@ -34,6 +34,14 @@ namespace TheMaze
             Regex regex = new Regex("[^0-9]+");
             e.Handled = regex.IsMatch(e.Text);
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            mainStackPanel.Children.Clear();
+            InitializeComponent();
+            ScreenOrginizer screenOrginizer = new ScreenOrginizer(mazeWindow.Width, mazeWindow.Height, Int32.Parse(mazeRows.Text), Int32.Parse(mazeCols.Text));
+            screenOrginizer.CreateMaze(mainStackPanel);
+        }
     }
     
     

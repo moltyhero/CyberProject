@@ -5,7 +5,7 @@ using System.Text;
 
 namespace TheMaze
 {
-    class MazeLink
+    public class MazeLink
     {
         public MazeNode FromNode, ToNode;
         public MazeLink(MazeNode from_node, MazeNode to_node)

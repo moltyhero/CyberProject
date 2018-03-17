@@ -10,7 +10,7 @@ using System.Windows;
 
 namespace TheMaze
 {
-    class MazeNode
+    public class MazeNode
     {
         int size;
         public const int North = 0;
@@ -32,7 +32,7 @@ namespace TheMaze
 
         public void GenerateBounds()
         {
-            Bounds = new Rectangle()
+            this.Bounds = new Rectangle()
             {
                 Height = size,
                 Width = size,
@@ -44,7 +44,7 @@ namespace TheMaze
 
         public void GenerateBorders()
         {
-            Borders = new Border()
+            this.Borders = new Border()
             {
                 BorderBrush = Brushes.Black,
                 BorderThickness = new Thickness(0, 0, 0, 0) // Order - Left, Top, Right, and Bottom

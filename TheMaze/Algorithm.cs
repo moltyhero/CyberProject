@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TheMaze
 {
-    class Algorithm
+    public class Algorithm
     {
         // Build a spanning tree with the indicated root node.
         private void FindSpanningTree(MazeNode root)

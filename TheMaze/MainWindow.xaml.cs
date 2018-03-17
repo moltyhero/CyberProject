@@ -24,7 +24,7 @@ namespace TheMaze
         public MainWindow()
         {
             InitializeComponent();
-            ScreenOrginizer screenOrginizer = new ScreenOrginizer(mazeWindow.Width, mazeWindow.Height);
+            ScreenOrginizer screenOrginizer = new ScreenOrginizer(mazeWindow.Width, mazeWindow.Height, Int32.Parse(mazeSize.Text));
             screenOrginizer.CreateMaze(20,20, mainStackPanel);
         }
 

@@ -13,11 +13,15 @@ namespace TheMaze
     {
         double screenHeight;
         double screenWidth;
+        int mazeSize;
+        MazeNode[,] nodes;
 
-        public ScreenOrginizer(double screenHeight, double screenWidth)
+        public ScreenOrginizer(double screenHeight, double screenWidth, int size)
         {
             this.screenHeight = screenHeight;
             this.screenWidth = screenWidth;
+            this.mazeSize = size;
+            nodes = new MazeNode[size, size];
         }
 
         // Calculate the desired size of the rectangle

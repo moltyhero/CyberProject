@@ -20,7 +20,9 @@
         </Grid.RowDefinitions>
         <!--<Rectangle Name="helper" Grid.Column="1" Grid.Row="1" Height="Auto" Width="Auto"></Rectangle>-->
         <StackPanel Name="mainStackPanel" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
-            
+
         </StackPanel>
+        <TextBox Name="mazeSize" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="120,30,0,0" PreviewTextInput="1000" VerticalAlignment="Top" Width="35"/>
+        <TextBlock Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="35,30,0,0" Text="Maze Size" VerticalAlignment="Top" />
     </Grid>
 </Window>

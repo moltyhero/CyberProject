@@ -67,6 +67,5 @@ namespace TheMaze
                 BorderThickness = new Thickness(sides[3], sides[0], sides[2], sides[1]) // Order - Left, Top, Right, and Bottom
             };
         }
-
     }
 }

@@ -46,6 +46,20 @@ namespace TheMaze
             screenOrginizer.CreateMaze(mainStackPanel);
         }
 
+        private void EndPointArrival ()
+        {
+            if (playerCurrentLocation.Equals(ScreenOrginizer.last))
+            {
+                
+            }
+        }
+
+
+        /// <summary>
+        /// Main method for movement. Create a movement illusion for the player. Also verefying wheter the movement is valid.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnKeyDownHandler(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Left)
@@ -84,7 +98,7 @@ namespace TheMaze
                     playerCurrentLocation.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Orange);
                 }
             }
-            
+            EndPointArrival(); // Handle the win condition.
         }
 
         private bool CheckWhetherValidMovement (MazeNode goingTo)

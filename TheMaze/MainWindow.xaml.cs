@@ -38,7 +38,7 @@ namespace TheMaze
         }
 
         // Maze regenerate
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void GenerateMazeClick(object sender, RoutedEventArgs e)
         {
             mainStackPanel.Children.Clear();
             InitializeComponent();
@@ -112,6 +112,16 @@ namespace TheMaze
                 return true;
             }
             return false;
+        }
+
+        private void Restart_Click(object sender, RoutedEventArgs e)
+        {
+            winPopup.IsOpen = false;
+        }
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
     

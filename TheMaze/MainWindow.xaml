@@ -20,10 +20,14 @@
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <Popup Name="winPopup" Width="500" Height="500" Placement = "Center">
-            <StackPanel>
-                <Button Name="restart" Click="Restart_Click">Start again</Button>
-                <Button Name="exit" Click="Exit_Click">Exit</Button>
-            </StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Button Name="restart" Grid.Column="0" Click="Restart_Click"> Start again </Button>
+                <Button Name="exit" Grid.Column="1" Click="Exit_Click"> Exit </Button>
+            </Grid>
         </Popup>
         
         <StackPanel Name="mainStackPanel" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Column="1" Grid.Row="1">

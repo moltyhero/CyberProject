@@ -37,8 +37,7 @@ namespace TheMaze
             e.Handled = regex.IsMatch(e.Text);
         }
 
-        // Maze regenerate
-        private void GenerateMazeClick(object sender, RoutedEventArgs e)
+        private void GenerateMaze()
         {
             mainStackPanel.Children.Clear();
             InitializeComponent();
@@ -46,11 +45,17 @@ namespace TheMaze
             screenOrginizer.CreateMaze(mainStackPanel);
         }
 
+        // Maze regenerate
+        private void Generate_Maze_Click(object sender, RoutedEventArgs e)
+        {
+            GenerateMaze();
+        }
+
         private void EndPointArrival ()
         {
             if (playerCurrentLocation.Equals(ScreenOrginizer.last))
             {
-                
+                winPopup.IsOpen = true;
             }
         }
 
@@ -117,11 +122,12 @@ namespace TheMaze
         private void Restart_Click(object sender, RoutedEventArgs e)
         {
             winPopup.IsOpen = false;
+            GenerateMaze();
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
-
+            System.Windows.Application.Current.Shutdown();
         }
     }
     

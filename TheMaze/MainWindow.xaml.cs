@@ -43,6 +43,7 @@ namespace TheMaze
             InitializeComponent();
             ScreenOrginizer screenOrginizer = new ScreenOrginizer(mazeWindow.Width, mazeWindow.Height, Int32.Parse(mazeRows.Text), Int32.Parse(mazeCols.Text));
             screenOrginizer.CreateMaze(mainStackPanel);
+            generateMazeButton.IsEnabled = true;
         }
 
         // Maze regenerate
@@ -55,6 +56,7 @@ namespace TheMaze
         {
             if (playerCurrentLocation.Equals(ScreenOrginizer.last))
             {
+                generateMazeButton.IsEnabled = false;
                 winPopup.IsOpen = true;
             }
         }

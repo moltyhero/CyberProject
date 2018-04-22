@@ -14,6 +14,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+// Network namespaces
+using System.Net;
+using NetworkCommsDotNet;
+using NetworkCommsDotNet.DPSBase;
+using NetworkCommsDotNet.Tools;
+using NetworkCommsDotNet.Connections;
+using NetworkCommsDotNet.Connections.TCP;
+
 namespace TheMaze
 {
     /// <summary>

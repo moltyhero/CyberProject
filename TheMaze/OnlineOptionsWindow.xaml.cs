@@ -26,9 +26,9 @@ namespace TheMaze
 
         private void Host_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow.AppWindow.ShowMyIP();
+            WindowInteraction.AppWindow.ShowMyIP();
+            WindowInteraction.AppWindow.HostSequence();
             this.Close();
-            // do server stuff
         }
 
         private void Connect_Popup_Click(object sender, RoutedEventArgs e)
@@ -38,7 +38,7 @@ namespace TheMaze
 
         private void Connect_Click(object sender, RoutedEventArgs e)
         {
-            //connect! do client stuff
+            WindowInteraction.AppWindow.ClientSequence(hostIPTextBox.Text);
         }
     }
 }

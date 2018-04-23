@@ -63,7 +63,9 @@
     <Compile Include="OnlineOptionsWindow.xaml.cs">
       <DependentUpon>OnlineOptionsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Player.cs" />
     <Compile Include="ScreenOrginizer.cs" />
+    <Compile Include="WindowInteraction.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

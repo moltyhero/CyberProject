@@ -30,22 +30,26 @@ namespace TheMaze
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static MainWindow AppWindow;
-        public static OnlineOptionsWindow onlineOptionsWindow;
         public static MazeNode playerCurrentLocation; // The current location of the user
         public static string myIP = "My IP is ";
+        ScreenOrginizer screenOrginizer;
 
         public MainWindow()
         {
             InitializeComponent();
-            AppWindow = this;
-            ScreenOrginizer screenOrginizer = new ScreenOrginizer(mazeWindow.Width, mazeWindow.Height, Int32.Parse(mazeRows.Text), Int32.Parse(mazeCols.Text));
-            screenOrginizer.CreateMaze(mainStackPanel);
+            WindowInteraction.AppWindow = this;
+            ShowMaze(mazeWindow.Width, mazeWindow.Height, Int32.Parse(mazeRows.Text), Int32.Parse(mazeCols.Text), mainStackPanel);
             GetLocalIPAddress();
             ipTextBox.Text = myIP;
-
-            //NetworkComms.SendObject("MazeStackPanel", "127.0.0.1", 10000, mainStackPanel);
         }
+
+        private void ShowMaze(double width, double height, int rows, int cols, StackPanel stackPanel)
+        {
+            screenOrginizer = new ScreenOrginizer(width, height, rows, cols);
+            screenOrginizer.CreateMaze(stackPanel);
+        }
+
+        #region Host methods
 
         // Gets my Local IP and put it in MyIP
         public static void GetLocalIPAddress()
@@ -61,12 +65,94 @@ namespace TheMaze
             //throw new Exception("No network adapters with an IPv4 address in the system!");
         }
 
+        public void ShowMyIP()
+        {
+            ipTextBox.Visibility = Visibility.Visible;
+        }
+
+        public void HostSequence ()
+        {
+            List<Player> players = new List<Player>();
+            // What to do when recieves objects
+            NetworkComms.AppendGlobalIncomingPacketHandler<string>("Joined", (packetHeader, connection, joinedIP) =>
+            {
+                players[0] = new Player(joinedIP);
+                NetworkComms.SendObject<ScreenOrginizer>("ScreenOrginizer", players[0].IP, 10000, screenOrginizer);
+            });
+
+            NetworkComms.AppendGlobalIncomingPacketHandler<bool>("GotScreenOrginizer", (packetHeader, connection, incomingApproval) =>
+            {
+                if (incomingApproval)
+                {
+                    NetworkComms.SendObject<StackPanel>("StackPanel", players[0].IP, 10000, mainStackPanel);
+                }
+                else
+                {
+                    NetworkComms.SendObject<ScreenOrginizer>("ScreenOrginizer", players[0].IP, 10000, screenOrginizer);
+                }
+            });
+
+            NetworkComms.AppendGlobalIncomingPacketHandler<bool>("GotStackPanel", (packetHeader, connection, incomingApproval) =>
+            {
+                if (incomingApproval)
+                {
+                    // Start the game:
+                    // Make buttons unavailable
+                    // allow movement?
+                    NetworkComms.SendObject<bool>("StartGame", "", 10000, true);
+                }
+                else
+                {
+                    NetworkComms.SendObject<StackPanel>("StackPanel", players[0].IP, 10000, mainStackPanel);
+                }
+            });
+
+            Connection.StartListening(ConnectionType.TCP, new IPEndPoint(IPAddress.Any, 0));
+        }
+
+        #endregion
+
+        #region Client methods
+
+        public void ClientSequence (string hostIP)
+        {
+            NetworkComms.SendObject<string>("Joined", hostIP, 10000, myIP);
+
+            // What to do when recieves objects
+            NetworkComms.AppendGlobalIncomingPacketHandler<ScreenOrginizer>("ScreenOrginizer", (packetHeader, connection, incomingScreenOrginizer) => 
+            {
+                screenOrginizer = incomingScreenOrginizer;
+                NetworkComms.SendObject<bool>("GotScreenOrginizer", hostIP, 10000, true);
+            });
+
+            NetworkComms.AppendGlobalIncomingPacketHandler<StackPanel>("StackPanel", (packetHeader, connection, incomingStackPanel) =>
+            {
+                screenOrginizer.CreateMaze(incomingStackPanel);
+                NetworkComms.SendObject<bool>("GotStackPanel", hostIP, 10000, true);
+            });
+
+            NetworkComms.AppendGlobalIncomingPacketHandler<bool>("StartGame", (packetHeader, connection, incomingApproval) =>
+            {
+                // show the maze
+                // enable movement
+            });
+
+
+            Connection.StartListening(ConnectionType.TCP, new IPEndPoint(IPAddress.Any, 0));
+        }
+
+        #endregion
+
+        #region Window controls methods
         // To make sure the user enters numbers only in the maze size textboxes
         private void MazeSizeTextBox(object sender, TextCompositionEventArgs e)
         {
             Regex regex = new Regex("[^0-9]+");
             e.Handled = regex.IsMatch(e.Text);
         }
+        #endregion
+
+        #region Game management
 
         private void GenerateMaze()
         {
@@ -75,12 +161,6 @@ namespace TheMaze
             ScreenOrginizer screenOrginizer = new ScreenOrginizer(mazeWindow.Width, mazeWindow.Height, Int32.Parse(mazeRows.Text), Int32.Parse(mazeCols.Text));
             screenOrginizer.CreateMaze(mainStackPanel);
             generateMazeButton.IsEnabled = true;
-        }
-
-        // Maze regenerate
-        private void Generate_Maze_Click(object sender, RoutedEventArgs e)
-        {
-            GenerateMaze();
         }
 
         // Win condition handle
@@ -93,6 +173,9 @@ namespace TheMaze
             }
         }
 
+        #endregion
+
+        #region Movement
 
         /// <summary>
         /// Main method for movement. Create a movement illusion for the player. Also verefying wheter the movement is valid.
@@ -153,6 +236,10 @@ namespace TheMaze
             return false;
         }
 
+        #endregion
+
+        #region Click events
+
         private void Restart_Click(object sender, RoutedEventArgs e)
         {
             winPopup.IsOpen = false;
@@ -166,14 +253,18 @@ namespace TheMaze
 
         private void Online_Click(object sender, RoutedEventArgs e)
         {
-            onlineOptionsWindow = new OnlineOptionsWindow();
-            onlineOptionsWindow.Show();
+            WindowInteraction.onlineOptionsWindow = new OnlineOptionsWindow();
+            WindowInteraction.onlineOptionsWindow.Show();
         }
 
-        public void ShowMyIP()
+        private void Generate_Maze_Click(object sender, RoutedEventArgs e)
         {
-            ipTextBox.Visibility = Visibility.Visible;
+            GenerateMaze();
         }
+
+        #endregion
+
+        
     }
     
     

@@ -21,7 +21,7 @@
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
-                <TextBox Name="ConnectToIPTextBox" Text="Enter the Host IP" Grid.Column="0"/>
+                <TextBox Name="hostIPTextBox" Text="Enter the Host IP" Grid.Column="0"/>
                 <Button Grid.Column="1" Content="Connect" Click="Connect_Click"/>
             </Grid>
         </Popup>

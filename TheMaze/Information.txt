@@ -1,2 +1,7 @@
 ﻿http://www.networkcomms.net/creating-a-wpf-chat-client-server-application/ The site which explains the use of the network library
 http://www.networkcomms.net/how-to-create-a-client-server-application-in-minutes/ Shorter explenation of the network library
+
+Flowchart:
+	Start game
+	start server
+		send the maze

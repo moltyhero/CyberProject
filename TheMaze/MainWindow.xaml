@@ -20,23 +20,35 @@
             <RowDefinition Height="4*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
+
+        <DockPanel Grid.ColumnSpan="3">
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="_Options">
+                    <MenuItem Header="_Online play" Click="Online_Click"/>
+                    <Separator />
+                    <MenuItem Header="_Exit" Click="Exit_Click"/>
+                </MenuItem>
+            </Menu>
+            <!--<TextBox AcceptsReturn="True" />-->
+            <TextBlock Name="ipTextBox" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,47,0,41" Height="22" RenderTransformOrigin="0.5,0.5" Width="151" Visibility="Hidden"/>
+        </DockPanel>
         <Popup Name="winPopup" Width="500" Height="250" Placement = "Center">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
-                <Button Name="restart" Grid.Column="0" Click="Restart_Click"> Start again </Button>
-                <Button Name="exit" Grid.Column="1" Click="Exit_Click"> Exit </Button>
+                <Button Name="restart" Grid.Column="0" Click="Restart_Click">Start again</Button>
+                <Button Name="exit" Grid.Column="1" Click="Exit_Click">Exit</Button>
             </Grid>
         </Popup>
-        
+
         <StackPanel Name="mainStackPanel" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
 
         </StackPanel>
-        <TextBox Name="mazeRows" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="120,30,0,0" PreviewTextInput="MazeSizeTextBox" Text="10" VerticalAlignment="Top" Width="35" MaxLength="3"/>
-        <TextBox Name="mazeCols" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="160,30,0,0" PreviewTextInput="MazeSizeTextBox" Text="10" VerticalAlignment="Top" Width="35" MaxLength="3"/>
-        <TextBlock Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="35,30,0,0" Text="Maze Size" VerticalAlignment="Top" />
-        <Button Name="generateMazeButton" Content="Generate maze" Grid.Column="1" Grid.Row="0"  Margin="244,23,181,0" VerticalAlignment="Top" Height="32" Click="Generate_Maze_Click"/>
+        <TextBox Name="mazeRows" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="120,52,0,0" PreviewTextInput="MazeSizeTextBox" Text="10" VerticalAlignment="Top" Width="35" MaxLength="3"/>
+        <TextBox Name="mazeCols" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="160,52,0,0" PreviewTextInput="MazeSizeTextBox" Text="10" VerticalAlignment="Top" Width="35" MaxLength="3"/>
+        <TextBlock Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="35,52,0,0" Text="Maze Size" VerticalAlignment="Top" />
+        <Button Name="generateMazeButton" Content="Generate maze" Grid.Column="1" Grid.Row="0"  Margin="246,44,179,0" VerticalAlignment="Top" Height="32" Click="Generate_Maze_Click"/>
     </Grid>
 </Window>

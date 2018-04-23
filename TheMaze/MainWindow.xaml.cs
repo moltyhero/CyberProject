@@ -21,6 +21,7 @@ using NetworkCommsDotNet.DPSBase;
 using NetworkCommsDotNet.Tools;
 using NetworkCommsDotNet.Connections;
 using NetworkCommsDotNet.Connections.TCP;
+using System.Net.Sockets;
 
 namespace TheMaze
 {
@@ -29,13 +30,35 @@ namespace TheMaze
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static MainWindow AppWindow;
+        public static OnlineOptionsWindow onlineOptionsWindow;
         public static MazeNode playerCurrentLocation; // The current location of the user
+        public static string myIP = "My IP is ";
 
         public MainWindow()
         {
             InitializeComponent();
+            AppWindow = this;
             ScreenOrginizer screenOrginizer = new ScreenOrginizer(mazeWindow.Width, mazeWindow.Height, Int32.Parse(mazeRows.Text), Int32.Parse(mazeCols.Text));
             screenOrginizer.CreateMaze(mainStackPanel);
+            GetLocalIPAddress();
+            ipTextBox.Text = myIP;
+
+            //NetworkComms.SendObject("MazeStackPanel", "127.0.0.1", 10000, mainStackPanel);
+        }
+
+        // Gets my Local IP and put it in MyIP
+        public static void GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    myIP = myIP + ip.ToString();
+                }
+            }
+            //throw new Exception("No network adapters with an IPv4 address in the system!");
         }
 
         // To make sure the user enters numbers only in the maze size textboxes
@@ -60,6 +83,7 @@ namespace TheMaze
             GenerateMaze();
         }
 
+        // Win condition handle
         private void EndPointArrival ()
         {
             if (playerCurrentLocation.Equals(ScreenOrginizer.last))
@@ -138,6 +162,17 @@ namespace TheMaze
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Application.Current.Shutdown();
+        }
+
+        private void Online_Click(object sender, RoutedEventArgs e)
+        {
+            onlineOptionsWindow = new OnlineOptionsWindow();
+            onlineOptionsWindow.Show();
+        }
+
+        public void ShowMyIP()
+        {
+            ipTextBox.Visibility = Visibility.Visible;
         }
     }
     

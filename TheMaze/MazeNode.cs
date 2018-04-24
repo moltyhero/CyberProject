@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows.Shapes;
 using System.Windows;
+using ProtoBuf;
 
 namespace TheMaze
 {
@@ -18,11 +19,23 @@ namespace TheMaze
         public const int East = South + 1;
         public const int West = East + 1;
 
+        /*public MazeNode (MazeNode[] neighbors, MazeNode predecessor)
+        {
+            this.Neighbors = neighbors;
+            this.Predecessor = predecessor;
+        }
+
+        public MazeNode() { }*/
+
         // The node's neighbors in order North, South, East, West.
         public MazeNode[] Neighbors = new MazeNode[4];
 
         // The predecessor in the spanning tree.
         public MazeNode Predecessor = null;
+
+        public int predecessoRow, predecessoCol;
+
+        public int col, row;
 
         // The node's bounds.
         public Rectangle Bounds;
@@ -43,7 +56,10 @@ namespace TheMaze
             if (this.Predecessor == this)
                 this.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Black);
             else if (this == ScreenOrginizer.last)
+            {
                 this.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Yellow);
+            }
+                
         }
 
         public void GenerateBorders()

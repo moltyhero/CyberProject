@@ -5,3 +5,10 @@ Flowchart:
 	Start game
 	start server
 		send the maze
+
+
+create empty maze in the array
+get maze size
+for every cell
+	get his predecesor col
+	get his predecesor row

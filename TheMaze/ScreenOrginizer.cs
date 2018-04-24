@@ -18,7 +18,7 @@ namespace TheMaze
         public double screenWidth;
         public int rows;
         public int cols;
-        public MazeNode[,] nodes; // Array of the maze's nodes
+        public static MazeNode[,] Nodes { get; private set; } // Array of the maze's nodes
         public static double rectSize;
         
         protected ScreenOrginizer() { }
@@ -35,31 +35,33 @@ namespace TheMaze
         private void MakeNodes()
         {
             // Make the nodes.
-            nodes = new MazeNode[cols, rows];
+            Nodes = new MazeNode[cols, rows];
             for (int i = 0; i < cols; i++)
             {
                 for (int j = 0; j < rows; j++)
                 {
-                    nodes[i, j] = new MazeNode();
+                    Nodes[i, j] = new MazeNode();
+                    Nodes[i, j].col = i;
+                    Nodes[i, j].row = j;
                 }
             }
-            Console.WriteLine(nodes);
+            Console.WriteLine(Nodes);
             // Initialize the nodes' neighbors.
             for (int c = 0; c < cols; c++)
             {
                 for (int r = 0; r < rows; r++)
                 {
                     if (r > 0)
-                        nodes[c, r].Neighbors[MazeNode.North] = nodes[c, r-1];
+                        Nodes[c, r].Neighbors[MazeNode.North] = Nodes[c, r-1];
                     if (r < rows - 1)
-                        nodes[c, r].Neighbors[MazeNode.South] = nodes[c, r + 1];
+                        Nodes[c, r].Neighbors[MazeNode.South] = Nodes[c, r + 1];
                     if (c > 0)
-                        nodes[c, r].Neighbors[MazeNode.West] = nodes[c - 1, r];
+                        Nodes[c, r].Neighbors[MazeNode.West] = Nodes[c - 1, r];
                     if (c < cols - 1)
-                        nodes[c, r].Neighbors[MazeNode.East] = nodes[c + 1, r];
+                        Nodes[c, r].Neighbors[MazeNode.East] = Nodes[c + 1, r];
                 }
             }
-            MainWindow.playerCurrentLocation = nodes[0, 0];
+            MainWindow.playerCurrentLocation = Nodes[0, 0];
         }
 
         // Calculate the desired size of the rectangle
@@ -73,19 +75,24 @@ namespace TheMaze
         }
 
         /// <summary>
-        /// Calls all the methods that are needed for the maze generation, and puts it on the screen
+        /// Calls all the methods that are needed for the maze generation
         /// </summary>
         /// <param name="rows"></param>
         /// <param name="cols"></param>
-        public void CreateMaze(StackPanel main)
+        public void CreateMaze(bool shouldFindSpanningTree)
         {
             double w = screenWidth * 4 / 6;
             double h = screenHeight * 4 / 6;
             CalcRectSize(h, w, rows, cols);
             MakeNodes();
-            Algorithm.FindSpanningTree(nodes[0, 0]);
+            if (shouldFindSpanningTree)
+                Algorithm.FindSpanningTree(Nodes[0, 0]);
 
-            // Add stack pannels to the main stack pannel
+            // DrawOnScreen()
+        }
+
+        public void DrawOnScreen (StackPanel main)
+        {
             for (int i = 0; i < this.cols; i++)
             {
                 StackPanel stackPannel = new StackPanel()
@@ -104,14 +111,13 @@ namespace TheMaze
                         StrokeThickness = 1,
                         Stroke = Brushes.Violet
                     };*/
-                    nodes[i, j].GenerateBounds();
-                    nodes[i, j].GenerateBorders();
-                    stackPannel.Children.Add(nodes[i,j].Borders);
-                    nodes[i, j].Borders.Child = nodes[i, j].Bounds;
+                    Nodes[i, j].GenerateBounds();
+                    Nodes[i, j].GenerateBorders();
+                    stackPannel.Children.Add(Nodes[i, j].Borders);
+                    Nodes[i, j].Borders.Child = Nodes[i, j].Bounds;
                 }
                 main.Children.Add(stackPannel);
             }
-
         }
     }
 }

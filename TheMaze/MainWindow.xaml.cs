@@ -33,6 +33,8 @@ namespace TheMaze
         
         public static MazeNode playerCurrentLocation; // The current location of the user
         public static string myIP = "My IP is ";
+        public int rowsNum = 0;
+        public int colsNum = 0;
         ScreenOrginizer screenOrginizer;
 
         public MainWindow()
@@ -45,10 +47,12 @@ namespace TheMaze
             
         }
 
-        private void ShowMaze(double width, double height, int rows, int cols, StackPanel stackPanel)
+        private void ShowMaze(double width, double height, int rows, int cols, StackPanel stackPanel, bool shouldFindSpanning, bool shouldDraw)
         {
             screenOrginizer = new ScreenOrginizer(width, height, rows, cols);
-            screenOrginizer.CreateMaze(stackPanel);
+            screenOrginizer.CreateMaze(shouldFindSpanning);
+            if (shouldDraw)
+                screenOrginizer.DrawOnScreen(stackPanel);
         }
         
         //TODO Maybe respond to the ip I got the object from? Both for Client + Server
@@ -85,10 +89,57 @@ namespace TheMaze
             {
                 foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
                 {
-                    //NetworkComms.SendObject("ScreenOrginizer", listenEndPoint.Address.ToString(), listenEndPoint.Port, screenOrginizer);
-                    NetworkComms.SendObject("RectTest", listenEndPoint.Address.ToString(), listenEndPoint.Port, new Rectangle()); // test
+                    NetworkComms.SendObject("MazeRows", listenEndPoint.Address.ToString(), listenEndPoint.Port, Int32.Parse(mazeRows.Text));
+                    NetworkComms.SendObject("MazeCols", listenEndPoint.Address.ToString(), listenEndPoint.Port, Int32.Parse(mazeCols.Text));
                 }
             });
+
+            NetworkComms.AppendGlobalIncomingPacketHandler<bool>("Request", (packetHeader, connection, request) =>
+            {
+                foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
+                {
+                    if (request.Equals("Rows"))
+                        NetworkComms.SendObject("MazeRows", listenEndPoint.Address.ToString(), listenEndPoint.Port, Int32.Parse(mazeRows.Text));
+                    else if (request.Equals("Cols"))
+                        NetworkComms.SendObject("MazeCols", listenEndPoint.Address.ToString(), listenEndPoint.Port, Int32.Parse(mazeCols.Text));
+                }
+            });
+
+            NetworkComms.AppendGlobalIncomingPacketHandler<Tuple<int,int>>("PredecessorReuquestPlace", (packetHeader, connection, place) =>
+            {
+                foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
+                {
+                    int row = ScreenOrginizer.Nodes[place.Item1, place.Item2].Predecessor.row;
+                    int col = ScreenOrginizer.Nodes[place.Item1, place.Item2].Predecessor.col;
+                    NetworkComms.SendObject("PredecessorPlace", listenEndPoint.Address.ToString(), listenEndPoint.Port, new Tuple<int,int, int, int>(place.Item1, place.Item2, col, row));
+                }
+            });
+
+            NetworkComms.AppendGlobalIncomingPacketHandler<bool>("Ready", (packetHeader, connection, ready) =>
+            {
+                foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
+                {
+                    if (ready)
+                    {
+                        // Start the game:
+                        // Make buttons unavailable
+                        // allow movement?
+                        
+                        NetworkComms.SendObject<bool>("StartGame", listenEndPoint.Address.ToString(), listenEndPoint.Port, true);
+                    }
+                }
+                mainStackPanel.Visibility = Visibility.Visible;
+            });
+
+            #region old
+            /*NetworkComms.AppendGlobalIncomingPacketHandler<Tuple<int, int>>("PredecessorReuquestCol", (packetHeader, connection, place) =>
+            {
+                foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
+                {
+                    int col = ScreenOrginizer.Nodes[place.Item1, place.Item2].Predecessor.col;
+                    NetworkComms.SendObject("PredecessorCol", listenEndPoint.Address.ToString(), listenEndPoint.Port, col);
+                }
+            });*/
 
             //NetworkComms.AppendGlobalIncomingPacketHandler<bool>("GotScreenOrginizer", (packetHeader, connection, incomingApproval) =>
             //{
@@ -120,7 +171,7 @@ namespace TheMaze
             //        {
             //            NetworkComms.SendObject<bool>("StartGame", listenEndPoint.Address.ToString(), listenEndPoint.Port, true);
             //        }
-                    
+
             //        mainStackPanel.Visibility = Visibility.Visible;
             //    }
             //    else
@@ -131,7 +182,7 @@ namespace TheMaze
             //        }
             //    }
             //});
-
+            #endregion
             Connection.StartListening(ConnectionType.TCP, new IPEndPoint(IPAddress.Any, 10000));
         }
 
@@ -142,9 +193,46 @@ namespace TheMaze
         public void ClientSequence (string hostIP)
         {
             NetworkComms.SendObject<string>("Joined", hostIP, 10000, myIP);
+            
+            NetworkComms.AppendGlobalIncomingPacketHandler<int>("MazeRows", (packetHeader, connection, rows) =>
+            {
+                this.rowsNum = rows;                
+            });
+            NetworkComms.AppendGlobalIncomingPacketHandler<int>("MazeCols", (packetHeader, connection, cols) =>
+            {
+                this.colsNum = cols;
+            });
 
+            if (rowsNum == 0)
+            {
+                NetworkComms.SendObject<string>("Request", hostIP, 10000, "Rows");
+            }
+            if (colsNum == 0)
+            {
+                NetworkComms.SendObject<string>("Request", hostIP, 10000, "Cols");
+            }
+
+            NetworkComms.AppendGlobalIncomingPacketHandler<Tuple<int,int,int,int>>("MazeCols", (packetHeader, connection, place) =>
+            {
+                ScreenOrginizer.Nodes[place.Item1, place.Item2].Predecessor = ScreenOrginizer.Nodes[place.Item3, place.Item4];
+            });
+
+            ShowMaze(mazeWindow.Width, mazeWindow.Height, rowsNum, colsNum, mainStackPanel, false, false);
+            for (int i = 0; i < colsNum; i++)
+            {
+                for (int j = 0; j < rowsNum; j++)
+                {
+                    if (ScreenOrginizer.Nodes[i,j].Predecessor.Equals(null))
+                    {
+                        NetworkComms.SendObject<Tuple<int, int>>("PredecessorReuquestPlace", hostIP, 10000, new Tuple<int, int>(i, j));
+                    }
+                }
+            }
+            screenOrginizer.DrawOnScreen(mainStackPanel);
+
+            #region old
             // What to do when recieves objects
-            NetworkComms.AppendGlobalIncomingPacketHandler<ScreenOrginizer>("ScreenOrginizer", (packetHeader, connection, incomingScreenOrginizer) => 
+            /*NetworkComms.AppendGlobalIncomingPacketHandler<ScreenOrginizer>("ScreenOrginizer", (packetHeader, connection, incomingScreenOrginizer) => 
             {
                 screenOrginizer = incomingScreenOrginizer;
                 NetworkComms.SendObject<bool>("GotScreenOrginizer", hostIP, 10000, true);
@@ -161,13 +249,8 @@ namespace TheMaze
                 HideWhenGameStart();
                 // show the maze
                 // enable movement
-            });
-
-            NetworkComms.AppendGlobalIncomingPacketHandler<bool>("RectTest", (packetHeader, connection, incomingRect) =>
-            {
-                NetworkComms.Shutdown();
-                System.Windows.Application.Current.Shutdown();
-            });
+            });*/
+            #endregion
 
             Connection.StartListening(ConnectionType.TCP, new IPEndPoint(IPAddress.Any, 10000));
         }
@@ -200,7 +283,7 @@ namespace TheMaze
         {
             mainStackPanel.Children.Clear();
             InitializeComponent();
-            ShowMaze(mazeWindow.Width, mazeWindow.Height, Int32.Parse(mazeRows.Text), Int32.Parse(mazeCols.Text), mainStackPanel);
+            ShowMaze(mazeWindow.Width, mazeWindow.Height, Int32.Parse(mazeRows.Text), Int32.Parse(mazeCols.Text), mainStackPanel, true, true);
             //ScreenOrginizer screenOrginizer = new ScreenOrginizer(mazeWindow.Width, mazeWindow.Height, Int32.Parse(mazeRows.Text), Int32.Parse(mazeCols.Text));
             //screenOrginizer.CreateMaze(mainStackPanel);
             generateMazeButton.IsEnabled = true;

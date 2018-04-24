@@ -80,6 +80,7 @@ namespace TheMaze
 
         public void HostSequence ()
         {
+            Connection.StartListening(ConnectionType.TCP, new IPEndPoint(IPAddress.Any, 10000));
             GenerateMaze();
             mainStackPanel.Visibility = Visibility.Hidden;
             generateMazeButton.Visibility = Visibility.Hidden;
@@ -87,16 +88,16 @@ namespace TheMaze
             // What to do when recieves objects
             NetworkComms.AppendGlobalIncomingPacketHandler<string>("Joined", (packetHeader, connection, joinedIP) =>
             {
-            foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
-            {
-                mazeRows.Dispatcher.Invoke(() =>
+                foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
                 {
-                    mazeCols.Dispatcher.Invoke(() =>
+                    mazeRows.Dispatcher.Invoke(() =>
                     {
-                        NetworkComms.SendObject("MazeRows", listenEndPoint.Address.ToString(), listenEndPoint.Port, Int32.Parse(mazeRows.Text));
-                        NetworkComms.SendObject("MazeCols", listenEndPoint.Address.ToString(), listenEndPoint.Port, Int32.Parse(mazeCols.Text));
+                        mazeCols.Dispatcher.Invoke(() =>
+                        {
+                            NetworkComms.SendObject("MazeRows", listenEndPoint.Address.ToString(), listenEndPoint.Port, Int32.Parse(mazeRows.Text));
+                            NetworkComms.SendObject("MazeCols", listenEndPoint.Address.ToString(), listenEndPoint.Port, Int32.Parse(mazeCols.Text));
+                        });
                     });
-                });
                 }
             });
 
@@ -200,7 +201,6 @@ namespace TheMaze
             //    }
             //});
             #endregion
-            Connection.StartListening(ConnectionType.TCP, new IPEndPoint(IPAddress.Any, 10000));
         }
 
         #endregion
@@ -243,13 +243,7 @@ namespace TheMaze
             NetworkComms.AppendGlobalIncomingPacketHandler<Tuple<int,int,int,int>>("PredecessorPlace", (packetHeader, connection, place) =>
             {
                 ScreenOrginizer.Nodes[place.Item1, place.Item2].Predecessor = ScreenOrginizer.Nodes[place.Item3, place.Item4];
-            });
-
-            NetworkComms.AppendGlobalIncomingPacketHandler<bool>("SizeApproval", (packetHeader, connection, place) =>
-            {
-                mainStackPanel.Children.Clear();
-                InitializeComponent();
-                ShowMaze(mazeWindow.Width, mazeWindow.Height, rowsNum, colsNum, mainStackPanel, false, false);
+                bool gotAll = true;
                 for (int i = 0; i < colsNum; i++)
                 {
                     for (int j = 0; j < rowsNum; j++)
@@ -257,12 +251,26 @@ namespace TheMaze
                         if (ScreenOrginizer.Nodes[i, j].Predecessor.Equals(null))
                         {
                             NetworkComms.SendObject<Tuple<int, int>>("PredecessorReuquestPlace", hostIP, 10000, new Tuple<int, int>(i, j));
+                            gotAll = false;
+                            break;
                         }
                     }
                 }
+                if (gotAll)
+                {
+                    NetworkComms.SendObject<bool>("Ready", hostIP, 10000, true);
+                }
+            });
+
+            NetworkComms.AppendGlobalIncomingPacketHandler<bool>("SizeApproval", (packetHeader, connection, place) =>
+            {
+                mainStackPanel.Children.Clear();
+                InitializeComponent();
+                ShowMaze(mazeWindow.Width, mazeWindow.Height, rowsNum, colsNum, mainStackPanel, false, false);
+                NetworkComms.SendObject("PredecessorReuquestPlace", hostIP, 10000, new Tuple<int, int>(0, 0));  
             });
             
-            NetworkComms.SendObject<bool>("Ready", hostIP, 10000, true);
+            
             NetworkComms.AppendGlobalIncomingPacketHandler<bool>("StartGame", (packetHeader, connection, shouldStart) =>
             {
                 if (shouldStart)

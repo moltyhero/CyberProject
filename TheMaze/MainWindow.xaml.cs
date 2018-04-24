@@ -77,23 +77,35 @@ namespace TheMaze
         {
             GenerateMaze();
             mainStackPanel.Visibility = Visibility.Hidden;
-            List<Player> players = new List<Player>();
+            generateMazeButton.Visibility = Visibility.Hidden;
+            //List<Player> players = new List<Player>();
             // What to do when recieves objects
-            NetworkComms.AppendGlobalIncomingPacketHandler<string>("Joined", (packetHeader, connection, joinedIP) =>
+            lock (screenOrginizer)
             {
-                players[0] = new Player(joinedIP);
-                NetworkComms.SendObject<ScreenOrginizer>("ScreenOrginizer", players[0].IP, 10000, screenOrginizer);
-            });
+                NetworkComms.AppendGlobalIncomingPacketHandler<string>("Joined", (packetHeader, connection, joinedIP) =>
+                {
+                    foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
+                    {
+                        NetworkComms.SendObject<ScreenOrginizer>("ScreenOrginizer", listenEndPoint.Address.ToString(), listenEndPoint.Port, screenOrginizer);
+                    }
+                });
+            }
 
             NetworkComms.AppendGlobalIncomingPacketHandler<bool>("GotScreenOrginizer", (packetHeader, connection, incomingApproval) =>
             {
                 if (incomingApproval)
                 {
-                    NetworkComms.SendObject<StackPanel>("StackPanel", players[0].IP, 10000, mainStackPanel);
+                    foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
+                    {
+                        NetworkComms.SendObject<StackPanel>("StackPanel", listenEndPoint.Address.ToString(), listenEndPoint.Port, mainStackPanel);
+                    }
                 }
                 else
                 {
-                    NetworkComms.SendObject<ScreenOrginizer>("ScreenOrginizer", players[0].IP, 10000, screenOrginizer);
+                    foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
+                    {
+                        NetworkComms.SendObject<ScreenOrginizer>("ScreenOrginizer", listenEndPoint.Address.ToString(), listenEndPoint.Port, screenOrginizer);
+                    }
                 }
             });
 
@@ -104,12 +116,19 @@ namespace TheMaze
                     // Start the game:
                     // Make buttons unavailable
                     // allow movement?
-                    NetworkComms.SendObject<bool>("StartGame", "", 10000, true);
+                    foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
+                    {
+                        NetworkComms.SendObject<bool>("StartGame", listenEndPoint.Address.ToString(), listenEndPoint.Port, true);
+                    }
+                    
                     mainStackPanel.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    NetworkComms.SendObject<StackPanel>("StackPanel", players[0].IP, 10000, mainStackPanel);
+                    foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
+                    {
+                        NetworkComms.SendObject<StackPanel>("StackPanel", listenEndPoint.Address.ToString(), listenEndPoint.Port, mainStackPanel);
+                    }
                 }
             });
 
@@ -267,6 +286,7 @@ namespace TheMaze
 
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
+            NetworkComms.Shutdown();
             System.Windows.Application.Current.Shutdown();
         }
 

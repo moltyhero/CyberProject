@@ -87,10 +87,16 @@ namespace TheMaze
             // What to do when recieves objects
             NetworkComms.AppendGlobalIncomingPacketHandler<string>("Joined", (packetHeader, connection, joinedIP) =>
             {
-                foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
+            foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
+            {
+                mazeRows.Dispatcher.Invoke(() =>
                 {
-                    NetworkComms.SendObject("MazeRows", listenEndPoint.Address.ToString(), listenEndPoint.Port, Int32.Parse(mazeRows.Text));
-                    NetworkComms.SendObject("MazeCols", listenEndPoint.Address.ToString(), listenEndPoint.Port, Int32.Parse(mazeCols.Text));
+                    mazeCols.Dispatcher.Invoke(() =>
+                    {
+                        NetworkComms.SendObject("MazeRows", listenEndPoint.Address.ToString(), listenEndPoint.Port, Int32.Parse(mazeRows.Text));
+                        NetworkComms.SendObject("MazeCols", listenEndPoint.Address.ToString(), listenEndPoint.Port, Int32.Parse(mazeCols.Text));
+                    });
+                });
                 }
             });
 
@@ -210,11 +216,19 @@ namespace TheMaze
             
             NetworkComms.AppendGlobalIncomingPacketHandler<int>("MazeRows", (packetHeader, connection, rows) =>
             {
-                this.rowsNum = rows;                
+                this.rowsNum = rows;
+                if (colsNum != 0 && rowsNum != 0)
+                {
+                    NetworkComms.SendObject<bool>("GotSize", hostIP, 10000, true);
+                }
             });
             NetworkComms.AppendGlobalIncomingPacketHandler<int>("MazeCols", (packetHeader, connection, cols) =>
             {
                 this.colsNum = cols;
+                if (colsNum != 0 && rowsNum != 0)
+                {
+                    NetworkComms.SendObject<bool>("GotSize", hostIP, 10000, true);
+                }
             });
 
             if (rowsNum == 0)
@@ -224,11 +238,6 @@ namespace TheMaze
             if (colsNum == 0)
             {
                 NetworkComms.SendObject<string>("Request", hostIP, 10000, "Cols");
-            }
-
-            if (colsNum != 0 && rowsNum !=0)
-            {
-                NetworkComms.SendObject<bool>("GotSize", hostIP, 10000, true);
             }
             
             NetworkComms.AppendGlobalIncomingPacketHandler<Tuple<int,int,int,int>>("PredecessorPlace", (packetHeader, connection, place) =>

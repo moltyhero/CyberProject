@@ -38,9 +38,10 @@ namespace TheMaze
         {
             InitializeComponent();
             WindowInteraction.AppWindow = this;
-            ShowMaze(mazeWindow.Width, mazeWindow.Height, Int32.Parse(mazeRows.Text), Int32.Parse(mazeCols.Text), mainStackPanel);
             GetLocalIPAddress();
             ipTextBox.Text = myIP;
+            //ShowMaze(mazeWindow.Width, mazeWindow.Height, Int32.Parse(mazeRows.Text), Int32.Parse(mazeCols.Text), mainStackPanel);
+            
         }
 
         private void ShowMaze(double width, double height, int rows, int cols, StackPanel stackPanel)
@@ -48,6 +49,8 @@ namespace TheMaze
             screenOrginizer = new ScreenOrginizer(width, height, rows, cols);
             screenOrginizer.CreateMaze(stackPanel);
         }
+        
+        //TODO Maybe respond to the ip I got the object from? Both for Client + Server
 
         #region Host methods
 
@@ -72,6 +75,8 @@ namespace TheMaze
 
         public void HostSequence ()
         {
+            GenerateMaze();
+            mainStackPanel.Visibility = Visibility.Hidden;
             List<Player> players = new List<Player>();
             // What to do when recieves objects
             NetworkComms.AppendGlobalIncomingPacketHandler<string>("Joined", (packetHeader, connection, joinedIP) =>
@@ -100,6 +105,7 @@ namespace TheMaze
                     // Make buttons unavailable
                     // allow movement?
                     NetworkComms.SendObject<bool>("StartGame", "", 10000, true);
+                    mainStackPanel.Visibility = Visibility.Visible;
                 }
                 else
                 {
@@ -133,6 +139,7 @@ namespace TheMaze
 
             NetworkComms.AppendGlobalIncomingPacketHandler<bool>("StartGame", (packetHeader, connection, incomingApproval) =>
             {
+                HideWhenGameStart();
                 // show the maze
                 // enable movement
             });
@@ -143,13 +150,24 @@ namespace TheMaze
 
         #endregion
 
-        #region Window controls methods
+        #region Window controls management
+
         // To make sure the user enters numbers only in the maze size textboxes
         private void MazeSizeTextBox(object sender, TextCompositionEventArgs e)
         {
             Regex regex = new Regex("[^0-9]+");
             e.Handled = regex.IsMatch(e.Text);
         }
+
+        // Hide the controls when the game starts
+        private void HideWhenGameStart ()
+        {
+            mazeSize.Visibility = Visibility.Hidden;
+            mazeRows.Visibility = Visibility.Hidden;
+            mazeCols.Visibility = Visibility.Hidden;
+            generateMazeButton.Visibility = Visibility.Hidden;
+        }
+
         #endregion
 
         #region Game management
@@ -158,8 +176,9 @@ namespace TheMaze
         {
             mainStackPanel.Children.Clear();
             InitializeComponent();
-            ScreenOrginizer screenOrginizer = new ScreenOrginizer(mazeWindow.Width, mazeWindow.Height, Int32.Parse(mazeRows.Text), Int32.Parse(mazeCols.Text));
-            screenOrginizer.CreateMaze(mainStackPanel);
+            ShowMaze(mazeWindow.Width, mazeWindow.Height, Int32.Parse(mazeRows.Text), Int32.Parse(mazeCols.Text), mainStackPanel);
+            //ScreenOrginizer screenOrginizer = new ScreenOrginizer(mazeWindow.Width, mazeWindow.Height, Int32.Parse(mazeRows.Text), Int32.Parse(mazeCols.Text));
+            //screenOrginizer.CreateMaze(mainStackPanel);
             generateMazeButton.IsEnabled = true;
         }
 
@@ -253,6 +272,7 @@ namespace TheMaze
 
         private void Online_Click(object sender, RoutedEventArgs e)
         {
+            mainStackPanel.Children.Clear();
             WindowInteraction.onlineOptionsWindow = new OnlineOptionsWindow();
             WindowInteraction.onlineOptionsWindow.Show();
         }

@@ -48,7 +48,7 @@
         </StackPanel>
         <TextBox Name="mazeRows" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="120,52,0,0" PreviewTextInput="MazeSizeTextBox" Text="10" VerticalAlignment="Top" Width="35" MaxLength="3"/>
         <TextBox Name="mazeCols" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="160,52,0,0" PreviewTextInput="MazeSizeTextBox" Text="10" VerticalAlignment="Top" Width="35" MaxLength="3"/>
-        <TextBlock Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="35,52,0,0" Text="Maze Size" VerticalAlignment="Top" />
+        <TextBlock Name="mazeSize" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="35,52,0,0" Text="Maze Size" VerticalAlignment="Top" />
         <Button Name="generateMazeButton" Content="Generate maze" Grid.Column="1" Grid.Row="0"  Margin="246,44,179,0" VerticalAlignment="Top" Height="32" Click="Generate_Maze_Click"/>
     </Grid>
 </Window>

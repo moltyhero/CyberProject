@@ -192,6 +192,9 @@ namespace TheMaze
 
         public void ClientSequence (string hostIP)
         {
+            mainStackPanel.Visibility = Visibility.Hidden;
+            generateMazeButton.Visibility = Visibility.Hidden;
+
             NetworkComms.SendObject<string>("Joined", hostIP, 10000, myIP);
             
             NetworkComms.AppendGlobalIncomingPacketHandler<int>("MazeRows", (packetHeader, connection, rows) =>
@@ -228,7 +231,17 @@ namespace TheMaze
                     }
                 }
             }
-            screenOrginizer.DrawOnScreen(mainStackPanel);
+
+            NetworkComms.SendObject<bool>("Ready", hostIP, 10000, true);
+            NetworkComms.AppendGlobalIncomingPacketHandler<bool>("StartGame", (packetHeader, connection, shouldStart) =>
+            {
+                if (shouldStart)
+                {
+                    screenOrginizer.DrawOnScreen(mainStackPanel);
+                    mainStackPanel.Visibility = Visibility.Visible;
+                }
+            });
+            
 
             #region old
             // What to do when recieves objects

@@ -80,16 +80,13 @@ namespace TheMaze
             generateMazeButton.Visibility = Visibility.Hidden;
             //List<Player> players = new List<Player>();
             // What to do when recieves objects
-            lock (screenOrginizer)
+            NetworkComms.AppendGlobalIncomingPacketHandler<string>("Joined", (packetHeader, connection, joinedIP) =>
             {
-                NetworkComms.AppendGlobalIncomingPacketHandler<string>("Joined", (packetHeader, connection, joinedIP) =>
+                foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
                 {
-                    foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
-                    {
-                        NetworkComms.SendObject<ScreenOrginizer>("ScreenOrginizer", listenEndPoint.Address.ToString(), listenEndPoint.Port, screenOrginizer);
-                    }
-                });
-            }
+                    NetworkComms.SendObject("ScreenOrginizer", listenEndPoint.Address.ToString(), listenEndPoint.Port, screenOrginizer);
+                }
+            });
 
             NetworkComms.AppendGlobalIncomingPacketHandler<bool>("GotScreenOrginizer", (packetHeader, connection, incomingApproval) =>
             {
@@ -133,7 +130,7 @@ namespace TheMaze
                 }
             });
 
-            Connection.StartListening(ConnectionType.TCP, new IPEndPoint(IPAddress.Any, 0));
+            Connection.StartListening(ConnectionType.TCP, new IPEndPoint(IPAddress.Any, 10000));
         }
 
         #endregion
@@ -165,7 +162,7 @@ namespace TheMaze
             });
 
 
-            Connection.StartListening(ConnectionType.TCP, new IPEndPoint(IPAddress.Any, 0));
+            Connection.StartListening(ConnectionType.TCP, new IPEndPoint(IPAddress.Any, 10000));
         }
 
         #endregion

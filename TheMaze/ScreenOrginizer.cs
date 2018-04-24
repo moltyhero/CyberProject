@@ -12,12 +12,13 @@ namespace TheMaze
     public class ScreenOrginizer
     {
         public static MazeNode last = new MazeNode();
-        double screenHeight;
-        double screenWidth;
-        int rows;
-        int cols;
+        public double screenHeight;
+        public double screenWidth;
+        public int rows;
+        public int cols;
+        public MazeNode[,] nodes; // Array of the maze's nodes
         public static double rectSize;
-        MazeNode[,] nodes; // Array of the maze's nodes
+        
 
         public ScreenOrginizer(double screenHeight, double screenWidth, int rows, int cols)
         {
@@ -25,7 +26,6 @@ namespace TheMaze
             this.screenWidth = screenWidth;
             this.rows = rows;
             this.cols = cols;
-            nodes = new MazeNode[cols, rows];
         }
 
         // Make the network of MazeNodes.

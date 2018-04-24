@@ -30,6 +30,7 @@ namespace TheMaze
     /// </summary>
     public partial class MainWindow : Window
     {
+        
         public static MazeNode playerCurrentLocation; // The current location of the user
         public static string myIP = "My IP is ";
         ScreenOrginizer screenOrginizer;
@@ -84,51 +85,52 @@ namespace TheMaze
             {
                 foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
                 {
-                    NetworkComms.SendObject("ScreenOrginizer", listenEndPoint.Address.ToString(), listenEndPoint.Port, screenOrginizer);
+                    //NetworkComms.SendObject("ScreenOrginizer", listenEndPoint.Address.ToString(), listenEndPoint.Port, screenOrginizer);
+                    NetworkComms.SendObject("RectTest", listenEndPoint.Address.ToString(), listenEndPoint.Port, new Rectangle()); // test
                 }
             });
 
-            NetworkComms.AppendGlobalIncomingPacketHandler<bool>("GotScreenOrginizer", (packetHeader, connection, incomingApproval) =>
-            {
-                if (incomingApproval)
-                {
-                    foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
-                    {
-                        NetworkComms.SendObject<StackPanel>("StackPanel", listenEndPoint.Address.ToString(), listenEndPoint.Port, mainStackPanel);
-                    }
-                }
-                else
-                {
-                    foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
-                    {
-                        NetworkComms.SendObject<ScreenOrginizer>("ScreenOrginizer", listenEndPoint.Address.ToString(), listenEndPoint.Port, screenOrginizer);
-                    }
-                }
-            });
+            //NetworkComms.AppendGlobalIncomingPacketHandler<bool>("GotScreenOrginizer", (packetHeader, connection, incomingApproval) =>
+            //{
+            //    if (incomingApproval)
+            //    {
+            //        foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
+            //        {
+            //            NetworkComms.SendObject<StackPanel>("StackPanel", listenEndPoint.Address.ToString(), listenEndPoint.Port, mainStackPanel);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
+            //        {
+            //            NetworkComms.SendObject<ScreenOrginizer>("ScreenOrginizer", listenEndPoint.Address.ToString(), listenEndPoint.Port, screenOrginizer);
+            //        }
+            //    }
+            //});
 
-            // TODO change that to a button that starts the game for multiple connection purposes
-            NetworkComms.AppendGlobalIncomingPacketHandler<bool>("GotStackPanel", (packetHeader, connection, incomingApproval) =>
-            {
-                if (incomingApproval)
-                {
-                    // Start the game:
-                    // Make buttons unavailable
-                    // allow movement?
-                    foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
-                    {
-                        NetworkComms.SendObject<bool>("StartGame", listenEndPoint.Address.ToString(), listenEndPoint.Port, true);
-                    }
+            //// TODO change that to a button that starts the game for multiple connection purposes
+            //NetworkComms.AppendGlobalIncomingPacketHandler<bool>("GotStackPanel", (packetHeader, connection, incomingApproval) =>
+            //{
+            //    if (incomingApproval)
+            //    {
+            //        // Start the game:
+            //        // Make buttons unavailable
+            //        // allow movement?
+            //        foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
+            //        {
+            //            NetworkComms.SendObject<bool>("StartGame", listenEndPoint.Address.ToString(), listenEndPoint.Port, true);
+            //        }
                     
-                    mainStackPanel.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
-                    {
-                        NetworkComms.SendObject<StackPanel>("StackPanel", listenEndPoint.Address.ToString(), listenEndPoint.Port, mainStackPanel);
-                    }
-                }
-            });
+            //        mainStackPanel.Visibility = Visibility.Visible;
+            //    }
+            //    else
+            //    {
+            //        foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
+            //        {
+            //            NetworkComms.SendObject<StackPanel>("StackPanel", listenEndPoint.Address.ToString(), listenEndPoint.Port, mainStackPanel);
+            //        }
+            //    }
+            //});
 
             Connection.StartListening(ConnectionType.TCP, new IPEndPoint(IPAddress.Any, 10000));
         }
@@ -161,6 +163,11 @@ namespace TheMaze
                 // enable movement
             });
 
+            NetworkComms.AppendGlobalIncomingPacketHandler<bool>("RectTest", (packetHeader, connection, incomingRect) =>
+            {
+                NetworkComms.Shutdown();
+                System.Windows.Application.Current.Shutdown();
+            });
 
             Connection.StartListening(ConnectionType.TCP, new IPEndPoint(IPAddress.Any, 10000));
         }

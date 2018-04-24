@@ -10,29 +10,17 @@ using System.Windows.Shapes;
 
 namespace TheMaze
 {
+    [ProtoContract]
     public class ScreenOrginizer
     {
-        [ProtoMember(1)]
         public static MazeNode last = new MazeNode();
-
-        [ProtoMember(2)]
         public double screenHeight;
-
-        [ProtoMember(3)]
         public double screenWidth;
-
-        [ProtoMember(4)]
         public int rows;
-
-        [ProtoMember(5)]
         public int cols;
-
-        [ProtoMember(6)]
         public MazeNode[,] nodes; // Array of the maze's nodes
-
-        [ProtoMember(7)]
         public static double rectSize;
-
+        
         protected ScreenOrginizer() { }
 
         public ScreenOrginizer(double screenHeight, double screenWidth, int rows, int cols)

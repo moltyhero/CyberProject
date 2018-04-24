@@ -109,6 +109,7 @@ namespace TheMaze
                 }
             });
 
+            // TODO change that to a button that starts the game for multiple connection purposes
             NetworkComms.AppendGlobalIncomingPacketHandler<bool>("GotStackPanel", (packetHeader, connection, incomingApproval) =>
             {
                 if (incomingApproval)

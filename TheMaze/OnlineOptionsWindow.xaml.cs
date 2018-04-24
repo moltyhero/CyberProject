@@ -39,6 +39,7 @@ namespace TheMaze
         private void Connect_Click(object sender, RoutedEventArgs e)
         {
             WindowInteraction.AppWindow.ClientSequence(hostIPTextBox.Text);
+            connectPopup.IsOpen = false;
         }
     }
 }

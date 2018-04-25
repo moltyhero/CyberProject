@@ -20,6 +20,16 @@
             <RowDefinition Height="4*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
+
+        <DockPanel Grid.ColumnSpan="3">
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="_Options">
+                    <MenuItem Header="_Play against the clock" Click="Against_The_Clock_Click"/>
+                    <Separator/>
+                    <MenuItem Header="_Exit" Click="Exit_Click"/>
+                </MenuItem>
+            </Menu>
+        </DockPanel>
         <Popup Name="winPopup" Width="500" Height="250" Placement = "Center">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -38,5 +48,6 @@
         <TextBox Name="mazeCols" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="160,30,0,0" PreviewTextInput="MazeSizeTextBox" Text="10" VerticalAlignment="Top" Width="35" MaxLength="3"/>
         <TextBlock Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="35,30,0,0" Text="Maze Size" VerticalAlignment="Top" />
         <Button Name="generateMazeButton" Content="Generate maze" Grid.Column="1" Grid.Row="0"  Margin="244,23,181,0" VerticalAlignment="Top" Height="32" Click="Generate_Maze_Click"/>
+        <Button Name="showSolutionButton" Content="Show solution" Grid.Column="1" Grid.Row="2"   VerticalAlignment="Top" Height="40" Width="200" Click="Show_Solution_Click"/>
     </Grid>
 </Window>

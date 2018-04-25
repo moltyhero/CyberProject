@@ -67,7 +67,9 @@ namespace TheMaze
             while (node.Predecessor != node)
             {
                 node.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Yellow);
+                node = node.Predecessor;
             }
+            node.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Yellow);
         }
 
         /// <summary>
@@ -143,6 +145,16 @@ namespace TheMaze
         }
 
         #endregion
+
+        private void Show_Solution_Click(object sender, RoutedEventArgs e)
+        {
+            DrawSolution();
+        }
+
+        private void Against_The_Clock_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 
 

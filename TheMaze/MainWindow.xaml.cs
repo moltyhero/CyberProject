@@ -61,6 +61,14 @@ namespace TheMaze
             }
         }
 
+        private void DrawSolution ()
+        {
+            MazeNode node = ScreenOrginizer.last;
+            while (node.Predecessor != node)
+            {
+                node.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Yellow);
+            }
+        }
 
         /// <summary>
         /// Main method for movement. Create a movement illusion for the player. Also verefying wheter the movement is valid.
@@ -121,6 +129,8 @@ namespace TheMaze
             return false;
         }
 
+        #region Button clicks
+
         private void Restart_Click(object sender, RoutedEventArgs e)
         {
             winPopup.IsOpen = false;
@@ -131,7 +141,9 @@ namespace TheMaze
         {
             System.Windows.Application.Current.Shutdown();
         }
+
+        #endregion
     }
-    
-    
+
+
 }

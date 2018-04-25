@@ -41,7 +41,7 @@
                     <RowDefinition Height="1*"/>
                     <RowDefinition Height="4*"/>
                 </Grid.RowDefinitions>
-                <TextBlock Name="wonTextBlock"  Grid.Row="0" Grid.ColumnSpan="2" TextAlignment="Center" Background="CadetBlue" Foreground="LightYellow" FontSize="18"> <Bold> You won! </Bold>   </TextBlock>
+                <TextBlock Name="wonTextBlock"  Grid.Row="0" Grid.ColumnSpan="2" TextAlignment="Center" Background="CadetBlue" Foreground="LightYellow" FontSize="18"> <Bold> You won! </Bold></TextBlock>
                 <Button Name="restart" Grid.Column="0" Grid.Row="1" Click="Restart_Click">Start again</Button>
                 <Button Name="exit" Grid.Column="1" Grid.Row="1" Click="Exit_Click">Exit</Button>
             </Grid>
@@ -50,12 +50,12 @@
         <StackPanel Name="mainStackPanel" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
 
         </StackPanel>
-        <TextBox Name="mazeRows" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="120,30,0,0" PreviewTextInput="MazeSizeTextBox" Text="10" VerticalAlignment="Top" Width="35" MaxLength="3"/>
-        <TextBox Name="mazeCols" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="160,30,0,0" PreviewTextInput="MazeSizeTextBox" Text="10" VerticalAlignment="Top" Width="35" MaxLength="3"/>
-        <TextBlock Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="35,30,0,0" Text="Maze Size" VerticalAlignment="Top" />
-        <TextBlock Name="modeTextBox" Grid.Column="2" Grid.Row="0" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" TextWrapping="Wrap" Text="Normal Mode"/>
+        <TextBox Name="mazeRows" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="120,30,0,0" PreviewTextInput="MazeSizeTextBox" Text="10" VerticalAlignment="Top" Width="35" MaxLength="3" FontSize="13"/>
+        <TextBox Name="mazeCols" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="160,30,0,0" PreviewTextInput="MazeSizeTextBox" Text="10" VerticalAlignment="Top" Width="35" MaxLength="3" FontSize="13"/>
+        <TextBlock Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="35,30,0,0" Text="Maze Size" VerticalAlignment="Top" FontSize="14"/>
+        <TextBlock Name="modeTextBox" Grid.Column="2" Grid.Row="0" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" TextWrapping="Wrap" Text="Normal Mode" Margin="0,52,10,52" Width="122"/>
         <Button Name="generateMazeButton" Content="Generate maze" Grid.Column="1" Grid.Row="0"  Margin="244,23,181,0" VerticalAlignment="Top" Height="32" Click="Generate_Maze_Click"/>
-        <Button Name="showSolutionButton" Content="Show solution" Grid.Column="1" Grid.Row="2"   VerticalAlignment="Top" Height="40" Width="200" Click="Show_Solution_Click"/>
+        <Button Name="showSolutionButton" Content="Show solution" Grid.Column="1" Grid.Row="2"   VerticalAlignment="Top" Height="40" Width="200" Click="Show_Solution_Click" FontSize="14"/>
         <TextBlock Name="timer" Grid.Column="1" HorizontalAlignment="Left" Margin="49,24,0,0" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="18" Height="32" Width="70"></TextBlock>
     </Grid>
 </Window>

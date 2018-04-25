@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -72,13 +73,16 @@ namespace TheMaze
 
         private void DrawSolution ()
         {
-            MazeNode node = ScreenOrginizer.last;
-            while (node.Predecessor != node)
+            if (ScreenOrginizer.last!= null)
             {
+                MazeNode node = ScreenOrginizer.last;
+                while (node.Predecessor != node)
+                {
+                    node.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Orange);
+                    node = node.Predecessor;
+                }
                 node.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Yellow);
-                node = node.Predecessor;
             }
-            node.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Yellow);
         }
 
         #region Movement management
@@ -168,7 +172,7 @@ namespace TheMaze
         private void Against_The_Clock_Click(object sender, RoutedEventArgs e)
         {
             againstTheClockMode = true;
-            modeTextBox.Text = "Against The Clock Mode"
+            modeTextBox.Text = "Against The Clock Mode";
         }
 
         private void Normal_Mode_Click(object sender, RoutedEventArgs e)

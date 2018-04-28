@@ -35,6 +35,8 @@ namespace TheMaze
         public static string myIP = "My IP is ";
         public int rowsNum = 0;
         public int colsNum = 0;
+        public int currentCols;
+        public int currentRows;
         ScreenOrginizer screenOrginizer;
 
         public MainWindow()
@@ -43,8 +45,10 @@ namespace TheMaze
             WindowInteraction.AppWindow = this;
             GetLocalIPAddress();
             ipTextBox.Text = myIP;
+            currentCols = Int32.Parse(mazeCols.Text);
+            currentRows = Int32.Parse(mazeRows.Text);
             //ShowMaze(mazeWindow.Width, mazeWindow.Height, Int32.Parse(mazeRows.Text), Int32.Parse(mazeCols.Text), mainStackPanel);
-            
+
         }
 
         private void ShowMaze(double width, double height, int rows, int cols, StackPanel stackPanel, bool shouldFindSpanning, bool shouldDraw)
@@ -90,7 +94,7 @@ namespace TheMaze
             {
                 foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
                 {
-                    mazeRows.Dispatcher.Invoke(() =>
+                    /*mazeRows.Dispatcher.Invoke(() =>
                     {
                         mazeCols.Dispatcher.Invoke(() =>
                         {
@@ -107,8 +111,27 @@ namespace TheMaze
                             NetworkComms.SendObject("PredecessorPlace", listenEndPoint.Address.ToString(), listenEndPoint.Port, new Tuple<int, int, int, int>(i, j, col, row));
                         }
                     }
-                    NetworkComms.SendObject("Ready", listenEndPoint.Address.ToString(), listenEndPoint.Port, true);
+                    NetworkComms.SendObject("HostReady", listenEndPoint.Address.ToString(), listenEndPoint.Port, true);*/
                 }
+                joinedIP = "192.168.1.19";
+                mazeRows.Dispatcher.Invoke(() =>
+                {
+                    mazeCols.Dispatcher.Invoke(() =>
+                    {
+                        NetworkComms.SendObject("MazeRows", joinedIP.ToString(), 10000, Int32.Parse(mazeRows.Text));
+                        NetworkComms.SendObject("MazeCols", joinedIP.ToString(), 10000, Int32.Parse(mazeCols.Text));
+                    });
+                });
+                for (int i = 0; i < currentCols; i++)
+                {
+                    for (int j = 0; j < currentRows; j++)
+                    {
+                        int row = ScreenOrginizer.Nodes[i, j].Predecessor.row;
+                        int col = ScreenOrginizer.Nodes[i, j].Predecessor.col;
+                        NetworkComms.SendObject("PredecessorPlace", joinedIP, 10000, new Tuple<int, int, int, int>(i, j, col, row));
+                    }
+                }
+                NetworkComms.SendObject("Finish", joinedIP, 10000, true);
 
             });
 
@@ -146,7 +169,7 @@ namespace TheMaze
 
             NetworkComms.AppendGlobalIncomingPacketHandler<bool>("Ready", (packetHeader, connection, ready) =>
             {
-                foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
+                /*foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
                 {
                     if (ready)
                     {
@@ -156,8 +179,19 @@ namespace TheMaze
                         
                         NetworkComms.SendObject<bool>("StartGame", listenEndPoint.Address.ToString(), listenEndPoint.Port, true);
                     }
+                }*/
+                if (ready)
+                {
+                    // Start the game:
+                    // Make buttons unavailable
+                    // allow movement?
+
+                    NetworkComms.SendObject<bool>("StartGame", "192.168.1.19", 10000, true);
                 }
-                mainStackPanel.Visibility = Visibility.Visible;
+                mainStackPanel.Dispatcher.Invoke(() =>
+                {
+                    mainStackPanel.Visibility = Visibility.Visible;
+                });
             });
 
             #region old

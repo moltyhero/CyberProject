@@ -156,16 +156,6 @@ namespace TheMaze
                 }
             });
 
-            NetworkComms.AppendGlobalIncomingPacketHandler<bool>("GotSize", (packetHeader, connection, answer) =>
-            {
-                if (answer)
-                {
-                    foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
-                    {
-                        NetworkComms.SendObject("SizeApproval", listenEndPoint.Address.ToString(), listenEndPoint.Port, true);
-                    }
-                }
-            });
 
             NetworkComms.AppendGlobalIncomingPacketHandler<bool>("Ready", (packetHeader, connection, ready) =>
             {
@@ -193,59 +183,6 @@ namespace TheMaze
                     mainStackPanel.Visibility = Visibility.Visible;
                 });
             });
-
-            #region old
-            /*NetworkComms.AppendGlobalIncomingPacketHandler<Tuple<int, int>>("PredecessorReuquestCol", (packetHeader, connection, place) =>
-            {
-                foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
-                {
-                    int col = ScreenOrginizer.Nodes[place.Item1, place.Item2].Predecessor.col;
-                    NetworkComms.SendObject("PredecessorCol", listenEndPoint.Address.ToString(), listenEndPoint.Port, col);
-                }
-            });*/
-
-            //NetworkComms.AppendGlobalIncomingPacketHandler<bool>("GotScreenOrginizer", (packetHeader, connection, incomingApproval) =>
-            //{
-            //    if (incomingApproval)
-            //    {
-            //        foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
-            //        {
-            //            NetworkComms.SendObject<StackPanel>("StackPanel", listenEndPoint.Address.ToString(), listenEndPoint.Port, mainStackPanel);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
-            //        {
-            //            NetworkComms.SendObject<ScreenOrginizer>("ScreenOrginizer", listenEndPoint.Address.ToString(), listenEndPoint.Port, screenOrginizer);
-            //        }
-            //    }
-            //});
-
-            //// TODO change that to a button that starts the game for multiple connection purposes
-            //NetworkComms.AppendGlobalIncomingPacketHandler<bool>("GotStackPanel", (packetHeader, connection, incomingApproval) =>
-            //{
-            //    if (incomingApproval)
-            //    {
-            //        // Start the game:
-            //        // Make buttons unavailable
-            //        // allow movement?
-            //        foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
-            //        {
-            //            NetworkComms.SendObject<bool>("StartGame", listenEndPoint.Address.ToString(), listenEndPoint.Port, true);
-            //        }
-
-            //        mainStackPanel.Visibility = Visibility.Visible;
-            //    }
-            //    else
-            //    {
-            //        foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
-            //        {
-            //            NetworkComms.SendObject<StackPanel>("StackPanel", listenEndPoint.Address.ToString(), listenEndPoint.Port, mainStackPanel);
-            //        }
-            //    }
-            //});
-            #endregion
         }
 
         #endregion
@@ -315,14 +252,6 @@ namespace TheMaze
                 
             });
 
-            /*NetworkComms.AppendGlobalIncomingPacketHandler<bool>("SizeApproval", (packetHeader, connection, place) =>
-            {
-                mainStackPanel.Children.Clear();
-                InitializeComponent();
-                ShowMaze(mazeWindow.Width, mazeWindow.Height, rowsNum, colsNum, mainStackPanel, false, false);
-                NetworkComms.SendObject("PredecessorReuquestPlace", hostIP, 10000, new Tuple<int, int>(0, 0));  
-            });*/
-
 
             NetworkComms.AppendGlobalIncomingPacketHandler<bool>("StartGame", (packetHeader, connection, shouldStart) =>
             {
@@ -339,29 +268,6 @@ namespace TheMaze
                     });
                 }
             });
-            
-
-            #region old
-            // What to do when recieves objects
-            /*NetworkComms.AppendGlobalIncomingPacketHandler<ScreenOrginizer>("ScreenOrginizer", (packetHeader, connection, incomingScreenOrginizer) => 
-            {
-                screenOrginizer = incomingScreenOrginizer;
-                NetworkComms.SendObject<bool>("GotScreenOrginizer", hostIP, 10000, true);
-            });
-
-            NetworkComms.AppendGlobalIncomingPacketHandler<StackPanel>("StackPanel", (packetHeader, connection, incomingStackPanel) =>
-            {
-                screenOrginizer.CreateMaze(incomingStackPanel);
-                NetworkComms.SendObject<bool>("GotStackPanel", hostIP, 10000, true);
-            });
-
-            NetworkComms.AppendGlobalIncomingPacketHandler<bool>("StartGame", (packetHeader, connection, incomingApproval) =>
-            {
-                HideWhenGameStart();
-                // show the maze
-                // enable movement
-            });*/
-            #endregion
 
             Connection.StartListening(ConnectionType.TCP, new IPEndPoint(IPAddress.Any, 10000));
         }

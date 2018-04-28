@@ -235,9 +235,16 @@ namespace TheMaze
 
                 if (colsNum != 0 && rowsNum != 0)
                 {
-                    mainStackPanel.Children.Clear();
+                    mainStackPanel.Dispatcher.Invoke(() =>
+                    {
+                        mainStackPanel.Children.Clear();
+                    });
+                    
                     InitializeComponent();
-                    ShowMaze(mazeWindow.Width, mazeWindow.Height, rowsNum, colsNum, mainStackPanel, false, false);
+                    mainStackPanel.Dispatcher.Invoke(() =>
+                    {
+                        ShowMaze(mazeWindow.Width, mazeWindow.Height, rowsNum, colsNum, mainStackPanel, false, false);
+                    });
                 }
             });
 
@@ -247,7 +254,7 @@ namespace TheMaze
                 ScreenOrginizer.Nodes[place.Item1, place.Item2].Predecessor = ScreenOrginizer.Nodes[place.Item3, place.Item4];
             });
 
-            NetworkComms.AppendGlobalIncomingPacketHandler<bool>("Ready", (packetHeader, connection, ready) =>
+            NetworkComms.AppendGlobalIncomingPacketHandler<bool>("Finish", (packetHeader, connection, ready) =>
             {
                 bool hasAll = true;
                 if (ready)
@@ -287,8 +294,15 @@ namespace TheMaze
             {
                 if (shouldStart)
                 {
-                    screenOrginizer.DrawOnScreen(mainStackPanel);
-                    mainStackPanel.Visibility = Visibility.Visible;
+                    Application.Current.Dispatcher.Invoke((Action)delegate
+                    {
+                        screenOrginizer.DrawOnScreen(mainStackPanel);
+                    });
+                    
+                    mainStackPanel.Dispatcher.Invoke(() =>
+                    {
+                        mainStackPanel.Visibility = Visibility.Visible;
+                    });
                 }
             });
             

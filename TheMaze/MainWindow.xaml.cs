@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 // Network namespaces
 using System.Net;
@@ -32,6 +34,9 @@ namespace TheMaze
     {
         
         public static MazeNode playerCurrentLocation; // The current location of the user
+        public bool hasFinished = false;
+        bool againstTheClockMode = false;
+        DispatcherTimer _timer = new DispatcherTimer();
         public static string myIP = "My IP is ";
         public int rowsNum = 0;
         public int colsNum = 0;
@@ -304,6 +309,11 @@ namespace TheMaze
             //ScreenOrginizer screenOrginizer = new ScreenOrginizer(mazeWindow.Width, mazeWindow.Height, Int32.Parse(mazeRows.Text), Int32.Parse(mazeCols.Text));
             //screenOrginizer.CreateMaze(mainStackPanel);
             generateMazeButton.IsEnabled = true;
+            if (againstTheClockMode)
+            {
+                AgainstTheClock();
+                _timer.Start();
+            }
         }
 
         // Win condition handle
@@ -313,13 +323,28 @@ namespace TheMaze
             {
                 generateMazeButton.IsEnabled = false;
                 winPopup.IsOpen = true;
+                hasFinished = true;
             }
         }
 
+        private void DrawSolution ()
+        {
+            if (ScreenOrginizer.last!= null)
+            {
+                MazeNode node = ScreenOrginizer.last;
+                while (node.Predecessor != node)
+                {
+                    node.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Orange);
+                    node = node.Predecessor;
+                }
+                node.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Yellow);
+            }
+        }
         #endregion
 
         #region Movement
 
+        #region Movement management
         /// <summary>
         /// Main method for movement. Create a movement illusion for the player. Also verefying wheter the movement is valid.
         /// </summary>
@@ -327,43 +352,46 @@ namespace TheMaze
         /// <param name="e"></param>
         private void OnKeyDownHandler(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Left)
+            if (!hasFinished)
             {
-                if (CheckWhetherValidMovement(playerCurrentLocation.Neighbors[MazeNode.West]))
+                if (e.Key == Key.Left)
                 {
-                    playerCurrentLocation.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.White);
-                    playerCurrentLocation = playerCurrentLocation.Neighbors[MazeNode.West];
-                    playerCurrentLocation.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Orange);
+                    if (CheckWhetherValidMovement(playerCurrentLocation.Neighbors[MazeNode.West]))
+                    {
+                        playerCurrentLocation.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.White);
+                        playerCurrentLocation = playerCurrentLocation.Neighbors[MazeNode.West];
+                        playerCurrentLocation.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Orange);
+                    }
                 }
-            }
-            else if (e.Key == Key.Right)
-            {
-                if (CheckWhetherValidMovement(playerCurrentLocation.Neighbors[MazeNode.East]))
+                else if (e.Key == Key.Right)
                 {
-                    playerCurrentLocation.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.White);
-                    playerCurrentLocation = playerCurrentLocation.Neighbors[MazeNode.East];
-                    playerCurrentLocation.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Orange);
+                    if (CheckWhetherValidMovement(playerCurrentLocation.Neighbors[MazeNode.East]))
+                    {
+                        playerCurrentLocation.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.White);
+                        playerCurrentLocation = playerCurrentLocation.Neighbors[MazeNode.East];
+                        playerCurrentLocation.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Orange);
+                    }
                 }
-            }
-            else  if (e.Key == Key.Up)
-            {
-                if (CheckWhetherValidMovement(playerCurrentLocation.Neighbors[MazeNode.North]))
+                else if (e.Key == Key.Up)
                 {
-                    playerCurrentLocation.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.White);
-                    playerCurrentLocation = playerCurrentLocation.Neighbors[MazeNode.North];
-                    playerCurrentLocation.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Orange);
+                    if (CheckWhetherValidMovement(playerCurrentLocation.Neighbors[MazeNode.North]))
+                    {
+                        playerCurrentLocation.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.White);
+                        playerCurrentLocation = playerCurrentLocation.Neighbors[MazeNode.North];
+                        playerCurrentLocation.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Orange);
+                    }
                 }
-            }
-            else if (e.Key == Key.Down)
-            {
-                if (CheckWhetherValidMovement(playerCurrentLocation.Neighbors[MazeNode.South]))
+                else if (e.Key == Key.Down)
                 {
-                    playerCurrentLocation.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.White);
-                    playerCurrentLocation = playerCurrentLocation.Neighbors[MazeNode.South];
-                    playerCurrentLocation.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Orange);
+                    if (CheckWhetherValidMovement(playerCurrentLocation.Neighbors[MazeNode.South]))
+                    {
+                        playerCurrentLocation.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.White);
+                        playerCurrentLocation = playerCurrentLocation.Neighbors[MazeNode.South];
+                        playerCurrentLocation.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Orange);
+                    }
                 }
+                EndPointArrival(); // Handle the win condition.
             }
-            EndPointArrival(); // Handle the win condition.
         }
 
         private bool CheckWhetherValidMovement (MazeNode goingTo)
@@ -386,6 +414,7 @@ namespace TheMaze
         private void Restart_Click(object sender, RoutedEventArgs e)
         {
             winPopup.IsOpen = false;
+            hasFinished = false;
             GenerateMaze();
         }
 
@@ -394,6 +423,53 @@ namespace TheMaze
             NetworkComms.Shutdown();
             System.Windows.Application.Current.Shutdown();
         }
+
+        private void Show_Solution_Click(object sender, RoutedEventArgs e)
+        {
+            DrawSolution();
+        }
+
+        private void Against_The_Clock_Click(object sender, RoutedEventArgs e)
+        {
+            againstTheClockMode = true;
+            modeTextBox.Text = "Against The Clock Mode";
+        }
+
+        private void Normal_Mode_Click(object sender, RoutedEventArgs e)
+        {
+            againstTheClockMode = false;
+            modeTextBox.Text = "Normal Mode";
+            timer.Visibility = Visibility.Hidden;
+            showSolutionButton.Visibility = Visibility.Visible;
+        }
+        #endregion
+
+        private void AgainstTheClock ()
+        {
+            showSolutionButton.Visibility = Visibility.Hidden;
+            timer.Visibility = Visibility.Visible;
+
+            _timer = new DispatcherTimer();
+            TimeSpan _time;
+
+            double timeInSec = Int32.Parse(mazeRows.Text) * Int32.Parse(mazeCols.Text) / 10;
+            _time = TimeSpan.FromSeconds(timeInSec);
+
+            _timer = new DispatcherTimer(new TimeSpan(0, 0, 1), DispatcherPriority.Normal, delegate
+            {
+                timer.Text = _time.ToString("c");
+                if (_time == TimeSpan.Zero)
+                {
+                    wonTextBlock.Text = "You lost!";
+                    winPopup.IsOpen = true;
+                    hasFinished = true;
+                    _timer.Stop();
+                }
+                _time = _time.Add(TimeSpan.FromSeconds(-1));
+            }, Application.Current.Dispatcher);
+        }
+
+        
 
         private void Online_Click(object sender, RoutedEventArgs e)
         {
@@ -411,6 +487,6 @@ namespace TheMaze
 
         
     }
-    
-    
+
+
 }

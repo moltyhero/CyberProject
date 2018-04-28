@@ -98,7 +98,18 @@ namespace TheMaze
                             NetworkComms.SendObject("MazeCols", listenEndPoint.Address.ToString(), listenEndPoint.Port, Int32.Parse(mazeCols.Text));
                         });
                     });
+                    for (int i = 0; i < colsNum; i++)
+                    {
+                        for (int j = 0; j < rowsNum; j++)
+                        {
+                            int row = ScreenOrginizer.Nodes[i, j].Predecessor.row;
+                            int col = ScreenOrginizer.Nodes[i, j].Predecessor.col;
+                            NetworkComms.SendObject("PredecessorPlace", listenEndPoint.Address.ToString(), listenEndPoint.Port, new Tuple<int, int, int, int>(i, j, col, row));
+                        }
+                    }
+                    NetworkComms.SendObject("Ready", listenEndPoint.Address.ToString(), listenEndPoint.Port, true);
                 }
+
             });
 
             NetworkComms.AppendGlobalIncomingPacketHandler<bool>("Request", (packetHeader, connection, request) =>
@@ -217,60 +228,61 @@ namespace TheMaze
             NetworkComms.AppendGlobalIncomingPacketHandler<int>("MazeRows", (packetHeader, connection, rows) =>
             {
                 this.rowsNum = rows;
-                if (colsNum != 0 && rowsNum != 0)
-                {
-                    NetworkComms.SendObject<bool>("GotSize", hostIP, 10000, true);
-                }
             });
             NetworkComms.AppendGlobalIncomingPacketHandler<int>("MazeCols", (packetHeader, connection, cols) =>
             {
                 this.colsNum = cols;
+
                 if (colsNum != 0 && rowsNum != 0)
                 {
-                    NetworkComms.SendObject<bool>("GotSize", hostIP, 10000, true);
+                    mainStackPanel.Children.Clear();
+                    InitializeComponent();
+                    ShowMaze(mazeWindow.Width, mazeWindow.Height, rowsNum, colsNum, mainStackPanel, false, false);
                 }
             });
 
-            if (rowsNum == 0)
-            {
-                NetworkComms.SendObject<string>("Request", hostIP, 10000, "Rows");
-            }
-            if (colsNum == 0)
-            {
-                NetworkComms.SendObject<string>("Request", hostIP, 10000, "Cols");
-            }
             
             NetworkComms.AppendGlobalIncomingPacketHandler<Tuple<int,int,int,int>>("PredecessorPlace", (packetHeader, connection, place) =>
             {
                 ScreenOrginizer.Nodes[place.Item1, place.Item2].Predecessor = ScreenOrginizer.Nodes[place.Item3, place.Item4];
-                bool gotAll = true;
-                for (int i = 0; i < colsNum; i++)
+            });
+
+            NetworkComms.AppendGlobalIncomingPacketHandler<bool>("Ready", (packetHeader, connection, ready) =>
+            {
+                bool hasAll = true;
+                if (ready)
                 {
-                    for (int j = 0; j < rowsNum; j++)
+                    //Check if have every Predecessor
+                    for (int i = 0; i < colsNum; i++)
                     {
-                        if (ScreenOrginizer.Nodes[i, j].Predecessor.Equals(null))
+                        for (int j = 0; j < rowsNum; j++)
                         {
-                            NetworkComms.SendObject<Tuple<int, int>>("PredecessorReuquestPlace", hostIP, 10000, new Tuple<int, int>(i, j));
-                            gotAll = false;
+                            if (ScreenOrginizer.Nodes[i, j].Predecessor == null)
+                            {
+                                NetworkComms.SendObject("PredecessorReuquestPlace", hostIP, 1000, new Tuple<int, int>(i, j));
+                                hasAll = false;
+                            }
                             break;
                         }
                     }
+                    if (hasAll)
+                    {
+                        NetworkComms.SendObject("Ready", hostIP, 10000, true);
+                    }
+                    
                 }
-                if (gotAll)
-                {
-                    NetworkComms.SendObject<bool>("Ready", hostIP, 10000, true);
-                }
+                
             });
 
-            NetworkComms.AppendGlobalIncomingPacketHandler<bool>("SizeApproval", (packetHeader, connection, place) =>
+            /*NetworkComms.AppendGlobalIncomingPacketHandler<bool>("SizeApproval", (packetHeader, connection, place) =>
             {
                 mainStackPanel.Children.Clear();
                 InitializeComponent();
                 ShowMaze(mazeWindow.Width, mazeWindow.Height, rowsNum, colsNum, mainStackPanel, false, false);
                 NetworkComms.SendObject("PredecessorReuquestPlace", hostIP, 10000, new Tuple<int, int>(0, 0));  
-            });
-            
-            
+            });*/
+
+
             NetworkComms.AppendGlobalIncomingPacketHandler<bool>("StartGame", (packetHeader, connection, shouldStart) =>
             {
                 if (shouldStart)

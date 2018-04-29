@@ -218,8 +218,9 @@ namespace TheMaze
 
             NetworkComms.AppendGlobalIncomingPacketHandler<Tuple<int, int>>("LastPlace", (packetHeader, connection, place) =>
             {
-                ScreenOrginizer.Nodes[place.Item1, place.Item2].Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Yellow);
-                ScreenOrginizer.Nodes[0, 0].Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Black);
+                //ScreenOrginizer.Nodes[place.Item1, place.Item2].Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Yellow);
+                ScreenOrginizer.last = ScreenOrginizer.Nodes[place.Item1, place.Item2];
+                //ScreenOrginizer.Nodes[0, 0].Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Black);
             });
 
             NetworkComms.AppendGlobalIncomingPacketHandler<bool>("Finish", (packetHeader, connection, ready) =>

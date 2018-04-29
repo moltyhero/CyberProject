@@ -130,6 +130,7 @@ namespace TheMaze
                         connection.SendObject("MazeCols", Int32.Parse(mazeCols.Text));
                     });
                 });
+                Thread.Sleep(500);
                 for (int i = 0; i < currentCols; i++)
                 {
                     for (int j = 0; j < currentRows; j++)

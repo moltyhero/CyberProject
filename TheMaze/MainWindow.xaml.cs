@@ -37,12 +37,15 @@ namespace TheMaze
         public bool hasFinished = false;
         bool againstTheClockMode = false;
         DispatcherTimer _timer = new DispatcherTimer();
-        public static string myIP = "My IP is ";
+        public static string myIP = "";
         public int rowsNum = 0;
         public int colsNum = 0;
         public int currentCols;
         public int currentRows;
         ScreenOrginizer screenOrginizer;
+        bool onlineMode = false;
+        string hostIP;
+        List<Player> players;
 
         public MainWindow()
         {
@@ -93,33 +96,16 @@ namespace TheMaze
             GenerateMaze();
             mainStackPanel.Visibility = Visibility.Hidden;
             generateMazeButton.Visibility = Visibility.Hidden;
-            List<Player> players = new List<Player>();
+            onlineMode = true;
+            players = new List<Player>();
+
+
             // What to do when recieves objects
             NetworkComms.AppendGlobalIncomingPacketHandler<string>("Joined", (packetHeader, connection, joinedIP) =>
             {
-                foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
-                {
-                    /*mazeRows.Dispatcher.Invoke(() =>
-                    {
-                        mazeCols.Dispatcher.Invoke(() =>
-                        {
-                            NetworkComms.SendObject("MazeRows", listenEndPoint.Address.ToString(), listenEndPoint.Port, Int32.Parse(mazeRows.Text));
-                            NetworkComms.SendObject("MazeCols", listenEndPoint.Address.ToString(), listenEndPoint.Port, Int32.Parse(mazeCols.Text));
-                        });
-                    });
-                    for (int i = 0; i < colsNum; i++)
-                    {
-                        for (int j = 0; j < rowsNum; j++)
-                        {
-                            int row = ScreenOrginizer.Nodes[i, j].Predecessor.row;
-                            int col = ScreenOrginizer.Nodes[i, j].Predecessor.col;
-                            NetworkComms.SendObject("PredecessorPlace", listenEndPoint.Address.ToString(), listenEndPoint.Port, new Tuple<int, int, int, int>(i, j, col, row));
-                        }
-                    }
-                    NetworkComms.SendObject("HostReady", listenEndPoint.Address.ToString(), listenEndPoint.Port, true);*/
-                }
-                joinedIP = "192.168.1.19";
+
                 players.Add(new Player(joinedIP));
+
                 mazeRows.Dispatcher.Invoke(() =>
                 {
                     mazeCols.Dispatcher.Invoke(() =>
@@ -128,7 +114,8 @@ namespace TheMaze
                         connection.SendObject("MazeCols", Int32.Parse(mazeCols.Text));
                     });
                 });
-                Thread.Sleep(500);
+                // To allow the client time to proccess the data
+                Thread.Sleep(1000);
                 for (int i = 0; i < currentCols; i++)
                 {
                     for (int j = 0; j < currentRows; j++)
@@ -158,7 +145,6 @@ namespace TheMaze
                 connection.SendObject("PredecessorPlace", new Tuple<int, int, int, int>(place.Item1, place.Item2, col, row));
             });
 
-
             NetworkComms.AppendGlobalIncomingPacketHandler<bool>("Ready", (packetHeader, connection, ready) =>
             {
                 if (ready)
@@ -174,16 +160,23 @@ namespace TheMaze
                     mainStackPanel.Visibility = Visibility.Visible;
                 });
             });
+
+            NetworkComms.AppendGlobalIncomingPacketHandler<bool>("PlayerWon", (packetHeader, connection, won) =>
+            {
+                EndPointArrival(false);
+            });
         }
 
         #endregion
 
         #region Client methods
 
-        public void ClientSequence (string hostIP)
+        public void ClientSequence (string host)
         {
             mainStackPanel.Visibility = Visibility.Hidden;
             generateMazeButton.Visibility = Visibility.Hidden;
+            onlineMode = true;
+            this.hostIP = host;
 
             NetworkComms.SendObject<string>("Joined", hostIP, 10000, myIP);
             
@@ -265,6 +258,11 @@ namespace TheMaze
                 }
             });
 
+            NetworkComms.AppendGlobalIncomingPacketHandler<bool>("PlayerWon", (packetHeader, connection, won) =>
+            {
+                EndPointArrival(false);
+            });
+
             Connection.StartListening(ConnectionType.TCP, new IPEndPoint(IPAddress.Any, 10000));
         }
 
@@ -308,11 +306,34 @@ namespace TheMaze
         }
 
         // Win condition handle
-        private void EndPointArrival ()
+        private void EndPointArrival (bool hasWon)
         {
             if (playerCurrentLocation.Equals(ScreenOrginizer.last))
             {
                 generateMazeButton.IsEnabled = false;
+                if (onlineMode)
+                {
+                    if (players != null)
+                    {
+                        foreach (Player player in players)
+                        {
+                            NetworkComms.SendObject("PlayerWon", player.IP, 10000, true);
+                        }
+                    }
+                    else
+                    {
+                        NetworkComms.SendObject("PlayerWon", hostIP, 10000, true);
+                    }
+                }
+                if (hasWon)
+                {
+                    wonTextBlock.Text = "You Won!";
+                }
+                else
+                {
+                    wonTextBlock.Text = "You lost!";
+                }
+
                 winPopup.IsOpen = true;
                 hasFinished = true;
             }
@@ -381,7 +402,7 @@ namespace TheMaze
                         playerCurrentLocation.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Orange);
                     }
                 }
-                EndPointArrival(); // Handle the win condition.
+                EndPointArrival(true); // Handle the win condition.
             }
         }
 
@@ -451,8 +472,7 @@ namespace TheMaze
                 timer.Text = _time.ToString("c");
                 if (_time == TimeSpan.Zero)
                 {
-                    wonTextBlock.Text = "You lost!";
-                    winPopup.IsOpen = true;
+                    EndPointArrival(false);
                     hasFinished = true;
                     _timer.Stop();
                 }

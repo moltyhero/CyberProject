@@ -250,6 +250,7 @@ namespace TheMaze
                     {
                         screenOrginizer.DrawOnScreen(mainStackPanel);
                         WindowInteraction.onlineOptionsWindow.Hide();
+                        hasFinished = false;
                     });
                     
                     mainStackPanel.Dispatcher.Invoke(() =>

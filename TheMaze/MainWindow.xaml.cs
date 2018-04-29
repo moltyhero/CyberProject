@@ -49,7 +49,7 @@ namespace TheMaze
             InitializeComponent();
             WindowInteraction.AppWindow = this;
             GetLocalIPAddress();
-            ipTextBox.Text = myIP;
+            ipTextBlock.Text = myIP;
             currentCols = Int32.Parse(mazeCols.Text);
             currentRows = Int32.Parse(mazeRows.Text);
             //ShowMaze(mazeWindow.Width, mazeWindow.Height, Int32.Parse(mazeRows.Text), Int32.Parse(mazeCols.Text), mainStackPanel);
@@ -84,7 +84,7 @@ namespace TheMaze
 
         public void ShowMyIP()
         {
-            ipTextBox.Visibility = Visibility.Visible;
+            ipTextBlock.Visibility = Visibility.Visible;
         }
 
         public void HostSequence ()
@@ -93,7 +93,7 @@ namespace TheMaze
             GenerateMaze();
             mainStackPanel.Visibility = Visibility.Hidden;
             generateMazeButton.Visibility = Visibility.Hidden;
-            //List<Player> players = new List<Player>();
+            List<Player> players = new List<Player>();
             // What to do when recieves objects
             NetworkComms.AppendGlobalIncomingPacketHandler<string>("Joined", (packetHeader, connection, joinedIP) =>
             {
@@ -119,12 +119,15 @@ namespace TheMaze
                     NetworkComms.SendObject("HostReady", listenEndPoint.Address.ToString(), listenEndPoint.Port, true);*/
                 }
                 joinedIP = "192.168.1.19";
+                players.Add(new Player(joinedIP));
                 mazeRows.Dispatcher.Invoke(() =>
                 {
                     mazeCols.Dispatcher.Invoke(() =>
                     {
-                        NetworkComms.SendObject("MazeRows", joinedIP.ToString(), 10000, Int32.Parse(mazeRows.Text));
-                        NetworkComms.SendObject("MazeCols", joinedIP.ToString(), 10000, Int32.Parse(mazeCols.Text));
+                        //NetworkComms.SendObject("MazeRows", joinedIP.ToString(), 10000, Int32.Parse(mazeRows.Text));
+                        //NetworkComms.SendObject("MazeCols", joinedIP.ToString(), 10000, Int32.Parse(mazeCols.Text));
+                        connection.SendObject("MazeRows", Int32.Parse(mazeRows.Text));
+                        connection.SendObject("MazeCols", Int32.Parse(mazeCols.Text));
                     });
                 });
                 for (int i = 0; i < currentCols; i++)
@@ -133,32 +136,34 @@ namespace TheMaze
                     {
                         int row = ScreenOrginizer.Nodes[i, j].Predecessor.row;
                         int col = ScreenOrginizer.Nodes[i, j].Predecessor.col;
-                        NetworkComms.SendObject("PredecessorPlace", joinedIP, 10000, new Tuple<int, int, int, int>(i, j, col, row));
+                        //NetworkComms.SendObject("PredecessorPlace", joinedIP, 10000, new Tuple<int, int, int, int>(i, j, col, row));
+                        connection.SendObject("PredecessorPlace", new Tuple<int, int, int, int>(i, j, col, row));
                     }
                 }
-                NetworkComms.SendObject("Finish", joinedIP, 10000, true);
+                //NetworkComms.SendObject("Finish", joinedIP, 10000, true);
+                connection.SendObject("Finish", true);
 
             });
 
             NetworkComms.AppendGlobalIncomingPacketHandler<bool>("Request", (packetHeader, connection, request) =>
             {
-                foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
-                {
-                    if (request.Equals("Rows"))
-                        NetworkComms.SendObject("MazeRows", listenEndPoint.Address.ToString(), listenEndPoint.Port, Int32.Parse(mazeRows.Text));
-                    else if (request.Equals("Cols"))
-                        NetworkComms.SendObject("MazeCols", listenEndPoint.Address.ToString(), listenEndPoint.Port, Int32.Parse(mazeCols.Text));
-                }
+                if (request.Equals("Rows"))
+                    //NetworkComms.SendObject("MazeRows", listenEndPoint.Address.ToString(), listenEndPoint.Port, Int32.Parse(mazeRows.Text));
+                    connection.SendObject("MazeRows", Int32.Parse(mazeRows.Text));
+                else if (request.Equals("Cols"))
+                    //NetworkComms.SendObject("MazeCols", listenEndPoint.Address.ToString(), listenEndPoint.Port, Int32.Parse(mazeCols.Text));
+                    connection.SendObject("MazeCols", Int32.Parse(mazeCols.Text));
             });
 
             NetworkComms.AppendGlobalIncomingPacketHandler<Tuple<int,int>>("PredecessorReuquestPlace", (packetHeader, connection, place) =>
             {
-                foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
-                {
+                //foreach (IPEndPoint listenEndPoint in Connection.ExistingLocalListenEndPoints(ConnectionType.TCP))
+                //{
                     int row = ScreenOrginizer.Nodes[place.Item1, place.Item2].Predecessor.row;
                     int col = ScreenOrginizer.Nodes[place.Item1, place.Item2].Predecessor.col;
-                    NetworkComms.SendObject("PredecessorPlace", listenEndPoint.Address.ToString(), listenEndPoint.Port, new Tuple<int,int, int, int>(place.Item1, place.Item2, col, row));
-                }
+                //NetworkComms.SendObject("PredecessorPlace", listenEndPoint.Address.ToString(), listenEndPoint.Port, new Tuple<int,int, int, int>(place.Item1, place.Item2, col, row));
+                connection.SendObject("PredecessorPlace", new Tuple<int, int, int, int>(place.Item1, place.Item2, col, row));
+                //}
             });
 
 
@@ -181,7 +186,8 @@ namespace TheMaze
                     // Make buttons unavailable
                     // allow movement?
 
-                    NetworkComms.SendObject<bool>("StartGame", "192.168.1.19", 10000, true);
+                    //NetworkComms.SendObject<bool>("StartGame", "192.168.1.19", 10000, true);
+                    connection.SendObject<bool>("StartGame", true);
                 }
                 mainStackPanel.Dispatcher.Invoke(() =>
                 {
@@ -291,7 +297,7 @@ namespace TheMaze
         // Hide the controls when the game starts
         private void HideWhenGameStart ()
         {
-            mazeSize.Visibility = Visibility.Hidden;
+            //mazeSize.Visibility = Visibility.Hidden;
             mazeRows.Visibility = Visibility.Hidden;
             mazeCols.Visibility = Visibility.Hidden;
             generateMazeButton.Visibility = Visibility.Hidden;

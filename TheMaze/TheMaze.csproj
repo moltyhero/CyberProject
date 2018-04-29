@@ -65,7 +65,6 @@
     </Compile>
     <Compile Include="Player.cs" />
     <Compile Include="ScreenOrginizer.cs" />
-    <Compile Include="ScreenOrginizerWrapper.cs" />
     <Compile Include="WindowInteraction.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

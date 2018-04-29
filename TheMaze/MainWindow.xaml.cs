@@ -34,7 +34,7 @@ namespace TheMaze
     {
         
         public static MazeNode playerCurrentLocation; // The current location of the user
-        public bool hasFinished = false;
+        public bool hasFinished = true;
         bool againstTheClockMode = false;
         DispatcherTimer _timer = new DispatcherTimer();
         public static string myIP = "";
@@ -299,6 +299,7 @@ namespace TheMaze
             //ScreenOrginizer screenOrginizer = new ScreenOrginizer(mazeWindow.Width, mazeWindow.Height, Int32.Parse(mazeRows.Text), Int32.Parse(mazeCols.Text));
             //screenOrginizer.CreateMaze(mainStackPanel);
             generateMazeButton.IsEnabled = true;
+            hasFinished = false;
             if (againstTheClockMode)
             {
                 AgainstTheClock();

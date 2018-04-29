@@ -11,9 +11,5 @@ namespace TheMaze
         public static MainWindow AppWindow;
         public static OnlineOptionsWindow onlineOptionsWindow;
 
-
-
-
-
     }
 }

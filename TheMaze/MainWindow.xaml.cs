@@ -130,6 +130,7 @@ namespace TheMaze
 
             });
 
+            // General request for lost data
             NetworkComms.AppendGlobalIncomingPacketHandler<bool>("Request", (packetHeader, connection, request) =>
             {
                 if (request.Equals("Rows"))
@@ -138,6 +139,7 @@ namespace TheMaze
                     connection.SendObject("MazeCols", Int32.Parse(mazeCols.Text));
             });
 
+            // In case a player didn't get all the data
             NetworkComms.AppendGlobalIncomingPacketHandler<Tuple<int,int>>("PredecessorReuquestPlace", (packetHeader, connection, place) =>
             {
                 int row = ScreenOrginizer.Nodes[place.Item1, place.Item2].Predecessor.row;
@@ -145,6 +147,7 @@ namespace TheMaze
                 connection.SendObject("PredecessorPlace", new Tuple<int, int, int, int>(place.Item1, place.Item2, col, row));
             });
 
+            // When a player is ready
             NetworkComms.AppendGlobalIncomingPacketHandler<bool>("Ready", (packetHeader, connection, ready) =>
             {
                 if (ready)
@@ -161,6 +164,7 @@ namespace TheMaze
                 });
             });
 
+            // Handle win condition
             NetworkComms.AppendGlobalIncomingPacketHandler<bool>("PlayerWon", (packetHeader, connection, won) =>
             {
                 EndPointArrival(false);

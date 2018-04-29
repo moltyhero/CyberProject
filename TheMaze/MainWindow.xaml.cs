@@ -311,8 +311,13 @@ namespace TheMaze
         {
             if (playerCurrentLocation.Equals(ScreenOrginizer.last))
             {
-                wonTextBlock.Text = "You Won!";
-                generateMazeButton.IsEnabled = false;
+                Application.Current.Dispatcher.Invoke((Action)delegate
+                {
+                    generateMazeButton.IsEnabled = false;
+                    wonTextBlock.Text = "You Won!";
+                    winPopup.IsOpen = true;
+                    hasFinished = true;
+                });
 
                 // Share the win to all players connected
                 if (onlineMode)
@@ -329,15 +334,17 @@ namespace TheMaze
                         NetworkComms.SendObject("PlayerWon", hostIP, 10000, true);
                     }
                 }
-                winPopup.IsOpen = true;
-                hasFinished = true;
             }
 
             else if (!hasWon)
             {
-                wonTextBlock.Text = "You lost!";
-                winPopup.IsOpen = true;
-                hasFinished = true;
+                Application.Current.Dispatcher.Invoke((Action)delegate
+                {
+                    generateMazeButton.IsEnabled = false;
+                    wonTextBlock.Text = "You lost!";
+                    winPopup.IsOpen = true;
+                    hasFinished = true;
+                });
             }
         }
 

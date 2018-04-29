@@ -79,7 +79,7 @@ namespace TheMaze
             {
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    myIP = myIP + ip.ToString();
+                    myIP = ip.ToString();
                 }
             }
             //throw new Exception("No network adapters with an IPv4 address in the system!");
@@ -249,6 +249,7 @@ namespace TheMaze
                     Application.Current.Dispatcher.Invoke((Action)delegate
                     {
                         screenOrginizer.DrawOnScreen(mainStackPanel);
+                        WindowInteraction.onlineOptionsWindow.Hide();
                     });
                     
                     mainStackPanel.Dispatcher.Invoke(() =>

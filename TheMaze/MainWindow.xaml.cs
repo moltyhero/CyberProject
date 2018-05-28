@@ -34,18 +34,18 @@ namespace TheMaze
     {
         
         public static MazeNode playerCurrentLocation; // The current location of the user
-        public bool hasFinished = true;
-        bool againstTheClockMode = false;
-        DispatcherTimer _timer = new DispatcherTimer();
-        public static string myIP = "";
+        public bool hasFinished = true; // To allow movement & other functionality before finishing the secion
+        bool againstTheClockMode = false; // For checking if the mode is currently against the click
+        DispatcherTimer _timer = new DispatcherTimer(); // A timer for against the click mode
+        public static string myIP = ""; // The player's IP
         public int rowsNum = 0;
         public int colsNum = 0;
         public int currentCols;
         public int currentRows;
         ScreenOrginizer screenOrginizer;
-        bool onlineMode = false;
-        string hostIP;
-        List<Player> players;
+        bool onlineMode = false; // For checking if the mode is currently online
+        string hostIP; // The host IP
+        List<Player> players; // List of players connected to the host
 
         public MainWindow()
         {
@@ -317,6 +317,7 @@ namespace TheMaze
 
         #region Game management
 
+        // Main method for handaling the maze creation
         private void GenerateMaze()
         {
             mainStackPanel.Children.Clear();
@@ -334,6 +335,7 @@ namespace TheMaze
             }
         }
 
+        // Create the maze and drawing on screen
         private void ShowMaze(double width, double height, int rows, int cols, StackPanel stackPanel, bool shouldFindSpanning, bool shouldDraw)
         {
             screenOrginizer = new ScreenOrginizer(width, height, rows, cols);
@@ -384,6 +386,7 @@ namespace TheMaze
             }
         }
 
+        // Drawing the solution of the maze
         private void DrawSolution ()
         {
             if (ScreenOrginizer.last!= null)
@@ -449,6 +452,7 @@ namespace TheMaze
             }
         }
 
+        // Checks if the player can go to the desired location
         private bool CheckWhetherValidMovement (MazeNode goingTo)
         {
             if (goingTo == null)
@@ -476,12 +480,12 @@ namespace TheMaze
             }
             else
             {
-                if (hostIP != null)
+                if (hostIP != null) // I have host - I am the client
                 {
                     ClientStart();
                     NetworkComms.SendObject<string>("Joined", hostIP, 10000, myIP);
                 }
-                else
+                else // No host - I am the host
                 {
                     HostStart();
                 }
@@ -540,6 +544,7 @@ namespace TheMaze
 
         #endregion
 
+        // Handeling the againt the clock mode
         private void AgainstTheClock ()
         {
             showSolutionButton.Visibility = Visibility.Hidden;

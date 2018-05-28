@@ -180,6 +180,11 @@ namespace TheMaze
         {
             mainStackPanel.Visibility = Visibility.Hidden;
             generateMazeButton.Visibility = Visibility.Hidden;
+
+            mainStackPanel.Children.Clear();
+            InitializeComponent();
+            hasFinished = false;
+
             onlineMode = true;
             this.hostIP = host;
 

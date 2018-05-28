@@ -59,16 +59,6 @@ namespace TheMaze
 
         }
 
-        private void ShowMaze(double width, double height, int rows, int cols, StackPanel stackPanel, bool shouldFindSpanning, bool shouldDraw)
-        {
-            screenOrginizer = new ScreenOrginizer(width, height, rows, cols);
-            screenOrginizer.CreateMaze(shouldFindSpanning);
-            if (shouldDraw)
-                screenOrginizer.DrawOnScreen(stackPanel);
-        }
-        
-        //TODO Maybe respond to the ip I got the object from? Both for Client + Server
-
         #region Host methods
 
         // Gets my Local IP and put it in MyIP
@@ -90,9 +80,20 @@ namespace TheMaze
             ipTextBlock.Visibility = Visibility.Visible;
         }
 
+        public void HideMyIP()
+        {
+            ipTextBlock.Visibility = Visibility.Hidden;
+        }
+
         public void HostSequence ()
         {
-            Connection.StartListening(ConnectionType.TCP, new IPEndPoint(IPAddress.Any, 10000));
+            ShowMyIP();
+            try
+            {
+                Connection.StartListening(ConnectionType.TCP, new IPEndPoint(IPAddress.Any, 10000));
+            }
+            catch
+            { }
             GenerateMaze();
             mainStackPanel.Visibility = Visibility.Hidden;
             generateMazeButton.Visibility = Visibility.Hidden;
@@ -269,7 +270,13 @@ namespace TheMaze
                 EndPointArrival(false);
             });
 
-            Connection.StartListening(ConnectionType.TCP, new IPEndPoint(IPAddress.Any, 10000));
+            try
+            {
+                Connection.StartListening(ConnectionType.TCP, new IPEndPoint(IPAddress.Any, 10000));
+            }
+            catch
+            { }
+            
         }
 
         #endregion
@@ -305,11 +312,20 @@ namespace TheMaze
             //screenOrginizer.CreateMaze(mainStackPanel);
             generateMazeButton.IsEnabled = true;
             hasFinished = false;
+            mainStackPanel.Visibility = Visibility.Visible;
             if (againstTheClockMode)
             {
                 AgainstTheClock();
                 _timer.Start();
             }
+        }
+
+        private void ShowMaze(double width, double height, int rows, int cols, StackPanel stackPanel, bool shouldFindSpanning, bool shouldDraw)
+        {
+            screenOrginizer = new ScreenOrginizer(width, height, rows, cols);
+            screenOrginizer.CreateMaze(shouldFindSpanning);
+            if (shouldDraw)
+                screenOrginizer.DrawOnScreen(stackPanel);
         }
 
         // Win condition handle
@@ -368,8 +384,6 @@ namespace TheMaze
             }
         }
         #endregion
-
-        #region Movement
 
         #region Movement management
         /// <summary>
@@ -442,7 +456,22 @@ namespace TheMaze
         {
             winPopup.IsOpen = false;
             hasFinished = false;
-            GenerateMaze();
+            if (!onlineMode)
+            {
+                GenerateMaze();
+            }
+            else
+            {
+                if (hostIP != null)
+                {
+                    ClientSequence(hostIP);
+                }
+                else
+                {
+                    HostSequence();
+                }
+            }
+            
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
@@ -453,22 +482,47 @@ namespace TheMaze
 
         private void Show_Solution_Click(object sender, RoutedEventArgs e)
         {
-            DrawSolution();
+            if (ScreenOrginizer.last.Predecessor != null)
+            {
+                DrawSolution();
+            }
+            
         }
 
         private void Against_The_Clock_Click(object sender, RoutedEventArgs e)
         {
             againstTheClockMode = true;
+            onlineMode = false;
+            NetworkComms.Shutdown();
             modeTextBox.Text = "Against The Clock Mode";
+            generateMazeButton.Visibility = Visibility.Hidden;
+            HideMyIP();
         }
 
         private void Normal_Mode_Click(object sender, RoutedEventArgs e)
         {
             againstTheClockMode = false;
+            onlineMode = false;
+            NetworkComms.Shutdown();
             modeTextBox.Text = "Normal Mode";
             timer.Visibility = Visibility.Hidden;
             showSolutionButton.Visibility = Visibility.Visible;
+            generateMazeButton.Visibility = Visibility.Visible;
+            HideMyIP();
         }
+
+        private void Online_Click(object sender, RoutedEventArgs e)
+        {
+            mainStackPanel.Children.Clear();
+            WindowInteraction.onlineOptionsWindow = new OnlineOptionsWindow();
+            WindowInteraction.onlineOptionsWindow.Show();
+        }
+
+        private void Generate_Maze_Click(object sender, RoutedEventArgs e)
+        {
+            GenerateMaze();
+        }
+
         #endregion
 
         private void AgainstTheClock ()
@@ -496,21 +550,6 @@ namespace TheMaze
         }
 
         
-
-        private void Online_Click(object sender, RoutedEventArgs e)
-        {
-            mainStackPanel.Children.Clear();
-            WindowInteraction.onlineOptionsWindow = new OnlineOptionsWindow();
-            WindowInteraction.onlineOptionsWindow.Show();
-        }
-
-        private void Generate_Maze_Click(object sender, RoutedEventArgs e)
-        {
-            GenerateMaze();
-        }
-
-        #endregion
-
         
     }
 

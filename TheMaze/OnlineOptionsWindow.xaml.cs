@@ -26,7 +26,6 @@ namespace TheMaze
 
         private void Host_Click(object sender, RoutedEventArgs e)
         {
-            WindowInteraction.AppWindow.ShowMyIP();
             WindowInteraction.AppWindow.HostSequence();
             this.Close();
         }

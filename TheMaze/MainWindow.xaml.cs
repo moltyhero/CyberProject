@@ -84,6 +84,14 @@ namespace TheMaze
         {
             ipTextBlock.Visibility = Visibility.Hidden;
         }
+        public void HostStart()
+        {
+            GenerateMaze();
+            mainStackPanel.Visibility = Visibility.Hidden;
+            generateMazeButton.Visibility = Visibility.Hidden;
+            onlineMode = true;
+            players = new List<Player>();
+        }
 
         public void HostSequence ()
         {
@@ -94,12 +102,8 @@ namespace TheMaze
             }
             catch
             { }
-            GenerateMaze();
-            mainStackPanel.Visibility = Visibility.Hidden;
-            generateMazeButton.Visibility = Visibility.Hidden;
-            onlineMode = true;
-            players = new List<Player>();
 
+            HostStart();
 
             // What to do when recieves objects
             NetworkComms.AppendGlobalIncomingPacketHandler<string>("Joined", (packetHeader, connection, joinedIP) =>
@@ -176,7 +180,7 @@ namespace TheMaze
 
         #region Client methods
 
-        public void ClientSequence (string host)
+        public void ClientStart ()
         {
             mainStackPanel.Visibility = Visibility.Hidden;
             generateMazeButton.Visibility = Visibility.Hidden;
@@ -186,6 +190,12 @@ namespace TheMaze
             hasFinished = false;
 
             onlineMode = true;
+        }
+
+        public void ClientSequence (string host)
+        {
+            ClientStart();
+
             this.hostIP = host;
 
             NetworkComms.SendObject<string>("Joined", hostIP, 10000, myIP);
@@ -205,7 +215,6 @@ namespace TheMaze
                         mainStackPanel.Children.Clear();
                     });
                     
-                    InitializeComponent();
                     mainStackPanel.Dispatcher.Invoke(() =>
                     {
                         ShowMaze(mazeWindow.Width, mazeWindow.Height, rowsNum, colsNum, mainStackPanel, false, false);
@@ -469,11 +478,12 @@ namespace TheMaze
             {
                 if (hostIP != null)
                 {
-                    ClientSequence(hostIP);
+                    ClientStart();
+                    NetworkComms.SendObject<string>("Joined", hostIP, 10000, myIP);
                 }
                 else
                 {
-                    HostSequence();
+                    HostStart();
                 }
             }
             

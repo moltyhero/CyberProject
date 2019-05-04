@@ -58,6 +58,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Algorithm.cs" />
+    <Compile Include="Bot.cs" />
     <Compile Include="MazeLink.cs" />
     <Compile Include="MazeNode.cs" />
     <Compile Include="OnlineOptionsWindow.xaml.cs">

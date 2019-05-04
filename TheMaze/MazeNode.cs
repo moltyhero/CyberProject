@@ -55,6 +55,7 @@ namespace TheMaze
             };
             if (this.Predecessor == this)
                 this.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Black);
+
             else if (this == ScreenOrginizer.last)
             {
                 this.Bounds.Fill = new SolidColorBrush(System.Windows.Media.Colors.Yellow);

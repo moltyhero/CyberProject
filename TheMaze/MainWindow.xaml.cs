@@ -514,13 +514,14 @@ namespace TheMaze
             onlineMode = false;
             NetworkComms.Shutdown();
             modeTextBox.Text = "Against The Clock Mode";
-            generateMazeButton.Visibility = Visibility.Hidden;
+            //generateMazeButton.Visibility = Visibility.Hidden;
             HideMyIP();
         }
 
         private void Normal_Mode_Click(object sender, RoutedEventArgs e)
         {
             againstTheClockMode = false;
+            _timer.Stop();
             onlineMode = false;
             NetworkComms.Shutdown();
             modeTextBox.Text = "Normal Mode";

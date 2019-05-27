@@ -8,7 +8,7 @@
         KeyDown="OnKeyDownHandler"
         KeyboardNavigation.DirectionalNavigation ="Once"
         Title="MainWindow" Height="800" Width="800"
-        Background="LightGoldenrodYellow">
+        >
     <Grid Name="mainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Name="menu" Width="1*"/>
@@ -23,7 +23,7 @@
         </Grid.RowDefinitions>
 
         <DockPanel Grid.ColumnSpan="3">
-            <Menu DockPanel.Dock="Top">
+            <Menu DockPanel.Dock="Top" Background="LightGoldenrodYellow">
                 <MenuItem Header="_Options">
                     <MenuItem Header="_Normal Mode" Click="Normal_Mode_Click"/>
                     <MenuItem Header="_Play Against The Clock" Click="Against_The_Clock_Click"/>

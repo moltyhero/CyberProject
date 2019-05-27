@@ -71,7 +71,8 @@ namespace TheMaze
             double WidthSize;
             HeightSize = StackHeight / rows;
             WidthSize = StackWidth / cols;
-            rectSize = Math.Min(HeightSize/1.5, WidthSize/1.5);
+            //rectSize = Math.Min(HeightSize/1.5, WidthSize/1.5);
+            rectSize = Math.Min(HeightSize, WidthSize);
         }
 
         /// <summary>

@@ -81,7 +81,9 @@ namespace TheMaze
             this.Borders = new Border()
             {
                 BorderBrush = Brushes.Black,
-                BorderThickness = new Thickness(sides[3], sides[0], sides[2], sides[1]) // Order - Left, Top, Right, and Bottom
+                BorderThickness = new Thickness(sides[3], sides[0], sides[2], sides[1]), // Order - Left, Top, Right, and Bottom
+                ClipToBounds = true,
+                Height = boundsSize
             };
         }
     }

@@ -8,6 +8,7 @@
         KeyDown="OnKeyDownHandler"
         KeyboardNavigation.DirectionalNavigation ="Once"
         Title="MainWindow" Height="800" Width="800"
+        Background="LightCoral"
         >
     <Grid Name="mainGrid">
         <Grid.ColumnDefinitions>
@@ -50,7 +51,7 @@
             </Grid>
         </Popup>
 
-        <StackPanel Name="mainStackPanel" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
+        <StackPanel Name="mainStackPanel" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Column="1" Grid.Row="1" Background="White">
 
         </StackPanel>
         <TextBox Name="mazeRows" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="120,30,0,0" PreviewTextInput="MazeSizeTextBox" Text="10" VerticalAlignment="Top" Width="35" MaxLength="3" FontSize="13"/>

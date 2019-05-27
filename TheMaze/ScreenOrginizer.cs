@@ -98,7 +98,8 @@ namespace TheMaze
             {
                 StackPanel stackPannel = new StackPanel()
                 {
-                    Name = ("col" + i)
+                    Name = ("col" + i),
+                    Background = main.Background
                 };
 
                 for (int j = 0; j < this.rows; j++)
